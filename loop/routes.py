@@ -4,9 +4,7 @@ from loop.forms import RegistrationForm, LoginForm, GroupForm
 from loop.models import Users
 from flask_login import login_user, current_user, logout_user, login_required
 from loop.cinema import CinemaMovies
-from loop.additive_utilitarian import AdditiveUtilitarian
-
-amount_of_people = 0
+from loop.algorithm import Algorithms
 
 
 @app.route("/")
@@ -17,7 +15,7 @@ def about():
 @app.route("/register", methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
-        return redirect(url_for('home'))
+        return redirect(url_for('profile'))
     form = RegistrationForm()
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
@@ -32,7 +30,7 @@ def register():
 @app.route("/login", methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('home'))
+        return redirect(url_for('profile'))
     form = LoginForm()
     if form.validate_on_submit():
         user = Users.query.filter_by(email=form.email.data).first()
@@ -60,22 +58,24 @@ def profile():
 @app.route("/group", methods=['GET', 'POST'])
 @login_required
 def group():
-    global amount_of_people
     cinema = CinemaMovies()
     form = GroupForm()
-    amount_of_people = form.amount.data
-    return render_template('group.html', title='Group', form=form, number=form.amount.data,
+    return render_template('group.html', title='Group', form=form, group_size=form.amount.data,
                            cinema=cinema.get_list_of_movies())
 
 
 @app.route("/group_recommendation", methods=['GET', 'POST'])
+@login_required
 def get_group_recommendation():
     input_values = []
-    if amount_of_people > 0:
-        for index in range(0, amount_of_people*amount_of_people):
-            input_values.append(int(request.form['myInput_' + str(index)]))
-
-    additive = AdditiveUtilitarian()
-    additive.get_values(input_values, amount_of_people)
-    additive.get_user_ratings()
-    return render_template('group_recommendation.html', title='Group recommendation', input_values=input_values)
+    for index in range(len(request.form)):
+        try:
+            input_values.append(request.form['myInput_' + str(index)])
+        except KeyError:
+            break
+    if input_values:
+        algorithm = Algorithms(input_values)
+        movie = algorithm.run()
+        return render_template('group_recommendation.html', title='Group recommendation', movie=movie)
+    else:
+        return redirect(url_for('group'))

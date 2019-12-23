@@ -1,5 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField
+from wtforms.widgets import html5
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from loop.models import Users
 
@@ -31,5 +32,6 @@ class LoginForm(FlaskForm):
 
 
 class GroupForm(FlaskForm):
-    amount = IntegerField('How many people are in the group?', validators=[DataRequired()])
+    amount = IntegerField('How many people are in the group?', widget=html5.NumberInput(min=2, max=10),
+                          validators=[DataRequired()])
     submit = SubmitField('Submit')
