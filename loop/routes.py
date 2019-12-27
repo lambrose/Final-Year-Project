@@ -67,6 +67,7 @@ def group():
 @app.route("/group_recommendation", methods=['GET', 'POST'])
 @login_required
 def get_group_recommendation():
+    cinema = CinemaMovies()
     input_values = []
     for index in range(len(request.form)):
         try:
@@ -75,7 +76,15 @@ def get_group_recommendation():
             break
     if input_values:
         algorithm = Algorithms(input_values)
-        movie = algorithm.run()
-        return render_template('group_recommendation.html', title='Group recommendation', movie=movie)
+        movies = algorithm.run()
+
+        movie_details = []
+        for movie in movies:
+            for k, v in cinema.get_movie_and_details().items():
+                if k == movie["movie"]:
+                    movie_details.append((k, v))
+
+        return render_template('group_recommendation.html', title='Group recommendation', movie=movies,
+                               movie_details=movie_details)
     else:
         return redirect(url_for('group'))
