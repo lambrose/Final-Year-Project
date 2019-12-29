@@ -1,17 +1,20 @@
-from bs4 import BeautifulSoup
 import urllib.request
+from bs4 import BeautifulSoup
 
 
 class CinemaMovies:
-
+    # The cinema link, where the data will be scrapped from
     my_url = 'https://www.eyecinema.ie/'
     uClient = urllib.request.urlopen(my_url)
     page_html = uClient.read()
     uClient.close()
     page_soup = BeautifulSoup(page_html, "html.parser")
+    # Each movie is in a container
     container = page_soup.find_all("div", {"class": "c_20"})
 
-    def get_list_of_movies(self):
+    # Getting all the movies and putting it into a list
+    # Movies are referenced by the html h2 tag
+    def get_cinema_movies(self):
         movies = []
         for contain in self.container:
             if contain.h2 is not None:
@@ -19,47 +22,30 @@ class CinemaMovies:
                 movies.append(movie_name)
         return movies
 
-    def get_movie_and_details(self):
-        drop_down = {}
+    # Getting the movie times and type of tickets
+    def get_movie_details(self):
+        # All possible movie times and their different types of tickets
+        ticket_types = [{"Normal screening times": " "}, {"Luxury screening times": " orange "},
+                        {"3D screening times": " purple "}, {"Sold out": " red "}, {"Last few tickets": " blue "},
+                        {"Parents and baby tickets": " pink "}, {"Ad/st screening times": " green "}]
+        # Iterating thought the container of movies and returning the times and ticket types
+        all_movie_times = {}
         for contain in self.container:
-            details = []
+            ticket_times = []
             if contain.h2 is not None:
                 movie_name = contain.h2.getText()
-                movie_time_container = contain.find_all("div", {"class": "c_100 timer"})
-                luxury_movie_time_container = contain.find_all("div", {"class": "c_100 orange timer"})
-                three_d_movie_time_container = contain.find_all("div", {"class": "c_100 purple timer"})
-                sold_out_movie_time_container = contain.find_all("div", {"class": "c_100 red timer"})
-                last_few_tickets_movie_time_container = contain.find_all("div", {"class": "c_100 blue timer"})
-                parent_baby_time_container = contain.find_all("div", {"class": "c_100 pink timer"})
-                ad_st_time_container = contain.find_all("div", {"class": "c_100 green timer"})
-
-                movie_times = [index.getText() for index in movie_time_container]
-                if movie_times:
-                    details.append({"Normal": movie_times})
-
-                luxury_movie_time = [index.getText() for index in luxury_movie_time_container]
-                if luxury_movie_time:
-                    details.append({"Luxury screening": luxury_movie_time})
-
-                three_d_movie_time = [index.getText() for index in three_d_movie_time_container]
-                if three_d_movie_time:
-                    details.append({"3D": three_d_movie_time})
-
-                sold_out_movie_time = [index.getText() for index in sold_out_movie_time_container]
-                if sold_out_movie_time:
-                    details.append({"Sold out": sold_out_movie_time})
-
-                last_few_tickets_movie_time = [index.getText() for index in last_few_tickets_movie_time_container]
-                if last_few_tickets_movie_time:
-                    details.append({"Last few tickets": last_few_tickets_movie_time})
-
-                parent_baby_time = [index.getText() for index in parent_baby_time_container]
-                if parent_baby_time:
-                    details.append({"Parents and baby": parent_baby_time})
-
-                ad_st_time = [index.getText() for index in ad_st_time_container]
-                if ad_st_time:
-                    details.append({"Ad/st": ad_st_time})
-
-                drop_down[movie_name] = details
-        return drop_down
+                for ticket_type in ticket_types:
+                    for ticket, time_type in ticket_type.items():
+                        # "times" is still in a html format
+                        times = contain.find_all("div", {"class": "c_100" + time_type + "timer"})
+                        # Getting the actual time
+                        formatted_time = [index.getText() for index in times]
+                        if formatted_time:
+                            ticket_times.append({ticket: formatted_time})
+                # Getting the movie image and stripping unnecessary data
+                img = contain.find('img')
+                image = img.get('src')
+                if image[:1] == "/":
+                    all_movie_times[movie_name] = {}
+                all_movie_times[movie_name][image] = ticket_times
+        return all_movie_times, self.my_url

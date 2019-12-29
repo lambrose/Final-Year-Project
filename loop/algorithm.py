@@ -1,5 +1,4 @@
-from loop.group_algorithm.additive_utilitarian import AdditiveUtilitarian
-from loop.group_algorithm.multiplicative_utilitarian import MultiplicativeUtilitarian
+from loop.group_algorithm.utilitarian_strategies import UtilitarianStrategies
 from loop.group_algorithm.borda_count import BordaCount
 from loop.group_algorithm.copeland_rule import CopelandRule
 from loop.group_algorithm.plurality_voting import PluralityVoting
@@ -26,7 +25,7 @@ class Algorithms:
                     ratings_data.append(int(value))
             # Else if it is not an int the error is caught as a string cannot be casted as a float
             except ValueError:
-                # Adding a list of strings once then breaking out of the for loop
+                # Separating all the movie names by a delimiter
                 movie_title = value.split("\r\n")
         # Separate individual user ratings
         for index in range(0, len(ratings_data), len(movie_title)):
@@ -35,13 +34,13 @@ class Algorithms:
 
     def additive(self):
         data = self.process_data()
-        additive = AdditiveUtilitarian(data[0], data[1])
-        return additive.get_recommendation()
+        additive = UtilitarianStrategies(data[0], data[1])
+        return additive.multiplicative_utilitarian()
 
     def multiplicative(self):
         data = self.process_data()
-        multiplicative = MultiplicativeUtilitarian(data[0], data[1])
-        return multiplicative.get_recommendation()
+        multiplicative = UtilitarianStrategies(data[0], data[1])
+        return multiplicative.additive_utilitarian()
 
     def borda(self):
         data = self.process_data()
@@ -79,6 +78,7 @@ class Algorithms:
         return strategies.average_without_misery()
 
     def run(self):
+        # Adding all movie results to a list dynamically
         movies = []
         algorithms = [self.additive(), self.multiplicative(), self.borda(), self.copeland(), self.plurality_voting(),
                       self.approval(), self.least_misery(), self.most_pleasure(), self.average_without_misery()]
@@ -89,7 +89,11 @@ class Algorithms:
                     movies.append(movie)
             else:
                 movies.append(algorithm)
-        group_movies = [list(j) for i, j in groupby(sorted(movies))]
-        rank_movies = [{"movie": r[0], "score": len(r)} for r in group_movies]
-        winner = sorted(rank_movies, key=lambda k: k['score'], reverse=True)
-        return winner
+
+        # Group the same movies
+        group_movies = [list(movie_group) for movie, movie_group in groupby(sorted(movies))]
+        # Get the movie and count the occurrence of each movie
+        rank_movies = [{"movie": movies[0], "score": len(movies)} for movies in group_movies]
+        # Sort the movies based on their score
+        sort_ranked_movies = sorted(rank_movies, key=lambda k: k['score'], reverse=True)
+        return sort_ranked_movies

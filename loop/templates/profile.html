@@ -1,17 +1,37 @@
 {% extends "layout.html" %}
 {% block content %}
-    <h1>{{ current_user.first_name }} {{ current_user.last_name }}</h1>
+   <style>
+        .movie-card
+        {
+            width: 300px;
+            height: auto;
+            background: #e6ffff;
+            align-self: center;
+            border-radius: 2px;
+            border-shadow: 2px 2px 4px #867475
+            margin: 12px
+        }
+        .movie-list-container
+        {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
 
-        <div class="col-md-4">
-          <div class="content-section">
-            <h3>Genres</h3>
-            <p class='text-muted'>What type of movie are you looking for?</p>
-              <ul class="list-group">
-                <li class="list-group-item list-group-item-light">genre 1</li>
-                <li class="list-group-item list-group-item-light">genre 2</li>
-                <li class="list-group-item list-group-item-light">genre 3</li>
-                <li class="list-group-item list-group-item-light">etc</li>
-              </ul>
-          </div>
+        img
+        {
+            max-width: 100%;
+        }
+    </style>
+    <section>
+        <div class="movie-list-container">
+            {% for movie in data["results"] %}
+            <div class="movie-card">
+                <img src="https://image.tmdb.org/t/p/w500/{{movie.poster_path}}" class="movie-poster">
+                <h2> {{ movie.title }}</h2>
+            </div>
+            {% endfor %}
         </div>
+    </section>
 {% endblock content %}

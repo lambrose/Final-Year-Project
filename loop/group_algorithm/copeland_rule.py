@@ -1,4 +1,4 @@
-from loop.group_algorithm.additive_utilitarian import AdditiveUtilitarian
+from loop.group_algorithm.utilitarian_strategies import UtilitarianStrategies
 
 
 class CopelandRule:
@@ -8,30 +8,36 @@ class CopelandRule:
         self.ratings = ratings
 
     def get_max_rating(self):
-        all_ratings = [rating for rating in zip(*self.ratings)]
+        # Separating the users ratings into ratings based on a specific movie
+        ratings_separated_by_column = [rating for rating in zip(*self.ratings)]
 
         all_comparisons = []
-        for ratings in all_ratings:
+        # Compare one movie ratings with all other movie ratings
+        for column_ratings in ratings_separated_by_column:
             row_comparison = []
-            for compare_ratings in all_ratings:
-                one_comparison = []
-                for rating, compare_rating in zip(ratings, compare_ratings):
+            for compare_column_ratings in ratings_separated_by_column:
+                comparison = []
+                # Compare itself with its neighbour
+                for rating, compare_rating in zip(column_ratings, compare_column_ratings):
                     if rating > compare_rating:
-                        one_comparison.append(-1)
+                        comparison.append(-1)
                     elif rating == compare_rating:
-                        one_comparison.append(0)
+                        comparison.append(0)
                     else:
-                        one_comparison.append(1)
-                sum_of_one_comparison = sum(one_comparison)
-                if sum_of_one_comparison > 0:
+                        comparison.append(1)
+                # Calculate the sum of results from the comparison
+                sum_of_comparison = sum(comparison)
+                # Then assign a score with respect to the movie compared to
+                if sum_of_comparison > 0:
                     row_comparison.append(1)
-                elif sum_of_one_comparison == 0:
+                elif sum_of_comparison == 0:
                     row_comparison.append(0)
                 else:
                     row_comparison.append(-1)
             all_comparisons.append(row_comparison)
         return all_comparisons
 
+    # Using the additive algorithm to determine the recommendation
     def get_recommendation(self):
-        additive = AdditiveUtilitarian(self.movies, self.get_max_rating())
-        return additive.get_recommendation()
+        additive = UtilitarianStrategies(self.movies, self.get_max_rating())
+        return additive.additive_utilitarian()
