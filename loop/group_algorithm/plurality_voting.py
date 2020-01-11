@@ -7,7 +7,7 @@ class PluralityVoting:
     counter = 1
     ordered_movie_indexes = []
 
-    def index_movies(self):
+    def enumerate_movie_ratings(self):
         # reset global values
         self.counter = 1
         self.ordered_movie_indexes = []
@@ -27,16 +27,13 @@ class PluralityVoting:
             sorted_ratings = [sorted(ratings, key=lambda item: item[1], reverse=True) for ratings in movie_ratings]
             for ratings in sorted_ratings:
                 rating_values = []
-                rating_index = []
                 for rating in ratings:
                     # Getting a specific amount of unique movie max ratings
                     if len(set(rating_values)) < self.counter:
                         rating_values.append(rating[1])
                 # For each max rating, get the associated movie, there may be many movies with the same rating
-                for rating_value in rating_values:
-                    for rating in ratings:
-                        if rating[1] == rating_value:
-                            rating_index.append(rating[0])
+                rating_index = [rating[0] for rating_value in rating_values for rating in ratings if
+                                rating[1] == rating_value]
                 highest_rated_movies.append(rating_index)
 
         intersection_values = []
@@ -48,20 +45,20 @@ class PluralityVoting:
             # If not, check if there are common movies in some of the users top movies
             index = 1
             # Compare each users movies without comparing themselves
-            for highest_rating_index in highest_rated_movies[:-1]:
-                for highest_rating_index_2 in highest_rated_movies[index:]:
+            for rating_index in highest_rated_movies[:-1]:
+                for rating_index_comparison in highest_rated_movies[index:]:
                     # Check for common movies
-                    if list(set(highest_rating_index) & set(highest_rating_index_2)):
-                        for value in list(set(highest_rating_index) & set(highest_rating_index_2)):
+                    if list(set(rating_index) & set(rating_index_comparison)):
+                        for value in list(set(rating_index) & set(rating_index_comparison)):
                             if value not in intersection_values:
                                 intersection_values.append(value)
                 index += 1
         # If a common movie was found between users, then remove it from remaining movies
         if intersection_values:
-            for rates in intersection_values:
+            for value in intersection_values:
                 for ratings in movie_ratings:
                     for rating in ratings:
-                        if rating[0] == rates:
+                        if rating[0] == value:
                             ratings.pop(ratings.index(rating))
 
             if intersection_values:
@@ -78,7 +75,7 @@ class PluralityVoting:
 
     # Get the recommended movie or movies
     def get_recommendation(self):
-        self.calculate_plurality_voting(True, self.index_movies())
+        self.calculate_plurality_voting(True, self.enumerate_movie_ratings())
         movies_result = [self.movies[index] for index in self.ordered_movie_indexes[0]]
         if len(movies_result) > 1:
             return movies_result

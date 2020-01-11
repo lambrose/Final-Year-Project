@@ -7,7 +7,7 @@ class CopelandRule:
         self.movies = movies
         self.ratings = ratings
 
-    def get_max_rating(self):
+    def copeland_table(self):
         # Separating the users ratings into ratings based on a specific movie
         ratings_separated_by_column = [rating for rating in zip(*self.ratings)]
 
@@ -39,5 +39,5 @@ class CopelandRule:
 
     # Using the additive algorithm to determine the recommendation
     def get_recommendation(self):
-        additive = UtilitarianStrategies(self.movies, self.get_max_rating())
+        additive = UtilitarianStrategies(self.movies, self.copeland_table())
         return additive.additive_utilitarian()

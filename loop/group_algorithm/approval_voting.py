@@ -7,7 +7,7 @@ class ApprovalVoting:
         self.movies = movies
         self.ratings = ratings
 
-    def get_max_rating(self):
+    def approval_voted_table(self):
         # Set the threshold for ratings
         threshold = 5
         # if ratings are above the threshold, then they are assigned a 1
@@ -17,5 +17,5 @@ class ApprovalVoting:
 
     # Using the additive algorithm to determine the recommendation
     def get_recommendation(self):
-        additive = UtilitarianStrategies(self.movies, self.get_max_rating())
+        additive = UtilitarianStrategies(self.movies, self.approval_voted_table())
         return additive.additive_utilitarian()
