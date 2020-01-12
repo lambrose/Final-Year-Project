@@ -3,20 +3,21 @@ from bs4 import BeautifulSoup
 
 
 class CinemaMovies:
-    # The cinema link, where the data will be scrapped from
-    my_url = 'https://www.eyecinema.ie/'
-    uClient = urllib.request.urlopen(my_url)
-    page_html = uClient.read()
-    uClient.close()
-    page_soup = BeautifulSoup(page_html, "html.parser")
-    # Each movie is in a container
-    container = page_soup.find_all("div", {"class": "c_20"})
+    def website(self):
+        # The cinema link, where the data will be scrapped from
+        my_url = 'https://www.eyecinema.ie/'
+        uClient = urllib.request.urlopen(my_url)
+        page_html = uClient.read()
+        uClient.close()
+        page_soup = BeautifulSoup(page_html, "html.parser")
+        # Each movie is in a container
+        return page_soup.find_all("div", {"class": "c_20"}), my_url
 
     # Getting all the movies and putting it into a list
     # Movies are referenced by the html h2 tag
-    def get_cinema_movies(self):
+    def get_movies(self):
         movies = []
-        for contain in self.container:
+        for contain in self.website()[0]:
             if contain.h2 is not None:
                 movie_name = contain.h2.getText()
                 movies.append(movie_name)
@@ -30,7 +31,7 @@ class CinemaMovies:
                         {"Parents and baby tickets": " pink "}, {"Ad/st screening times": " green "}]
         # Iterating thought the container of movies and returning the times and ticket types
         all_movie_times = {}
-        for contain in self.container:
+        for contain in self.website()[0]:
             ticket_times = []
             if contain.h2 is not None:
                 movie_name = contain.h2.getText()
@@ -48,4 +49,4 @@ class CinemaMovies:
                 if image[:1] == "/":
                     all_movie_times[movie_name] = {}
                 all_movie_times[movie_name][image] = ticket_times
-        return all_movie_times, self.my_url
+        return all_movie_times, self.website()[1]

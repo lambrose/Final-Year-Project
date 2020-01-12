@@ -14,8 +14,7 @@ class Algorithms:
 
     def process_data(self):
         ratings_data = []
-        movie_title = None
-        ratings = []
+        movies = None
         # iterating through the nested list
         for value in self.data:
             try:
@@ -26,11 +25,11 @@ class Algorithms:
             # Else if it is not an int the error is caught as a string cannot be casted as a float
             except ValueError:
                 # Separating all the movie names by a delimiter
-                movie_title = value.split("\r\n")
+                # Then taking all the values after the first index
+                movies = value.split(",")[1:]
         # Separate individual user ratings
-        for index in range(0, len(ratings_data), len(movie_title)):
-            ratings.append(ratings_data[index:index + len(movie_title)])
-        return movie_title, ratings
+        ratings = [ratings_data[index:index + len(movies)] for index in range(0, len(ratings_data), len(movies))]
+        return movies, ratings
 
     def additive(self):
         data = self.process_data()

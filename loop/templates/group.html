@@ -1,169 +1,177 @@
 {% extends "layout.html" %}
 {% block content %}
-        <form method="POST" action="">
-            {{ form.hidden_tag() }}
-            <fieldset class="form-group">
-                <div class="form-group">
-                    {{ form.amount.label(class="form-control-label") }}
-
-                    {% if form.amount.errors %}
-                        {{ form.amount(class="form-control form-control-lg is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.amount.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.amount(class="form-control form-control-lg") }}
-                    {% endif %}
-                </div>
-            </fieldset>
-            <div class="form-group">
-                {{ form.submit(class="btn btn-outline-info") }}
-            </div>
-        </form>
+    <form method="POST" action="">
+        {{ people_form.hidden_tag() }}
+        <fieldset class="form-group">
+                {{ people_form.amount.label(class="form-control-label") }}
+                {% if people_form.amount.errors %}
+                    {{ people_form.amount(class="form-control form-control-lg is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in people_form.amount.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ people_form.amount(class="form-control form-control-lg") }}
+                {% endif %}
+        </fieldset>
+        <div class="form-group">
+            {{ people_form.submit(class="btn btn-outline-info") }}
+        </div>
+    </form>
 
     <div id='movies_to_be_rated'></div>
     <form class="form-group" id="ratings_form" action="/group_recommendation" method="post"></form>
     <button class="btn btn-outline-info" type="submit" id="submit_rating" form="ratings_form">Submit</button>
 
     <script>
+    // Set movie rating submit form to invisible as the checkbox has not been completed
     document.getElementById('submit_rating').style.visibility = 'hidden';
 
-    var selection = 0;
+    var submit_form_already = 0;
     function movies_selected()
     {
-      if (selection == 0)
+    // check if this is the first time the form has been submitted
+      if (submit_form_already == 0)
       {
-          var movies_picked = 'Users:\n' + document.getElementById("display").value;
-          var movies = movies_picked.split('\n');
-          if(movies[1] != "")
+      // Adding all the movies selected in the checkbox to an array
+          var movies = ['Users:'];
+          var movies_checked =document.querySelectorAll(".checkbox:checked");
+            for(var index=0; index < movies_checked.length; index++)
+             {
+                movies.push(movies_checked[index].value)
+             }
+           // Ensure movies are checked
+          if(movies.length > 1)
           {
+          // Set each movie name to the value of a text input box
+          // For user display, so it's read only
               for(var index=0; index<movies.length; index++)
               {
+              // remove punctuation from movie title
                 var movie = movies[index].replace("'", "");
                 document.getElementById('movies_to_be_rated').innerHTML=
-                document.getElementById('movies_to_be_rated').innerHTML+"<input class='form-control movie_title' type='text' value='"+movie+"' readonly>";
+                document.getElementById('movies_to_be_rated').innerHTML+
+                "<input class='form-control group_movie_title' type='text' value='"+movie+"' readonly>";
               }
-              movie_ratings(movies.length)
+              movie_ratings(movies.length, movies)
               document.getElementById('submit_rating').style.visibility = 'visible';
-              document.getElementById("options_selected").value="Reset";
-              selection++;
+              document.getElementById("cinema_checked").value="Reset";
+              submit_form_already++;
           }
        }
        else
        {
+       // If the checkbox has already been completed, refresh the page to reset it
            location.reload();
        }
     }
 
-    function movie_ratings(size)
+    function movie_ratings(size, movies)
     {
         var counter = 0;
         var user_id = 1;
+        //Call form for inputs to be created
         var form = document.getElementById("ratings_form");
-        for(var index=0; index<{{group_size}}*size + 1; index++)
+        //Amount of input boxes needed
+        var input_numbers = {{group_size}}*size + 1
+        for(var index=0; index < input_numbers; index++)
         {
             var input = document.createElement('input');
             input.type = 'number';
-            input.name = 'myInput_' + index;
-            input.id = 'myInput_' + index;
-            input.className = 'form-control class_number'
+            input.id = 'input_rating_' + index;
+            input.name = 'input_rating_' + index;
+            input.className = 'form-control group_movie_ratings'
             input.min = 1;
             input.max = 10;
             input.required = true
+            //The first input box in each row, should be of type text to represent a user
             if(index%size == 0)
             {
                  input.type = 'text';
                  input.readOnly = true;
+                 // User ID is developed by a counter
                  input.value = "User "+user_id++;
             }
+            // Each user enters their own ratings on a separate form
             if(counter<size)
             {
                 form.appendChild(input);
                 counter++;
              }
-             else
-             {
+            else
+            {
+                // Add a new line breaker
                  linebreak = document.createElement("br");
                  form.appendChild(linebreak);
+                 // Add current input value
                  form.appendChild(input);
+                 // reset counter to 1 and not 0
                  counter = 1
-             }
-              if(index == {{group_size}}*size)
-             {
-                 input.type = "hidden";
-                 input.value = document.getElementById("display").value;
-             }
+            }
+            // Add the movies into the last input box, so it can be returned to the algorithms
+            if(index == {{group_size}}*size)
+            {
+                input.type = "hidden";
+                input.value = movies;
+            }
         }
     };
 </script>
 {% endblock content %}
 
 {% block sidebar %}
-    <legend>Cinema Movies</legend>
+<div class="sidebar-section">
+    <h3 class="border-bottom mb-4">Cinema Movies</h3>
+    <p id="no_movies"></p>
     {% if group_size %}
-    <form id="cinema_form">
-    <fieldset>
-        <select class="form-control" id="cinema_id" multiple>
-                  {% for movie in cinema %}
-                    <option value="{{movie}}">{{movie}}</option>
-                  {% endfor %}
-        </select>
-        <h6 class="text_area_title">Movies selected:</h6>
-        <textarea class="form-control" id="display" required onkeypress="return false;"></textarea>
-        <input type="submit" onclick="movies_selected()" value="Done" id="options_selected" class="btn btn-outline-info"/>
-    </fieldset>
-    </form>
-
-    <script>
-        if (document.getElementById('cinema_id').options.length == 0)
+         <form id="cinema_movie_check" method="POST" action="">
+            {{ cinema_form.hidden_tag() }}
+            <fieldset class="form-group">
+                {% if cinema_form.options.errors %}
+                <div class="invalid-feedback">
+                    {% for error in cinema_form.options.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% for option in cinema_form.options %}
+                    <div class="form-check">
+                        {{ option(class="checkbox form-check-input") }}
+                        {{ option.label(class="form-check-label") }}
+                    </div>
+                {% endfor %}
+            </fieldset>
+            <div class="form-group">
+                {{ cinema_form.submit(id="cinema_checked", class="btn btn-outline-info") }}
+            </div>
+        </form>
+    <script type="text/javascript">
+    //Determine all checkboxes in a form
+        var checks = document.querySelectorAll(".checkbox");
+        //If there are no movies in the cinema
+        if(checks.length == 0)
         {
-            document.getElementById("display").value = "There are no movies in the cinema at the moment.";
-            document.getElementById('options_selected').style.visibility = 'hidden';
+            document.getElementById("no_movies").innerHTML = "There are no movies in the cinema at the moment.";
+            document.getElementById('cinema_movie_check').style.visibility = 'hidden';
         }
-          // reference to select list and callback function
-        function getSelected(select, fn) {
-            var options_selected = [], option_selected;
-            // loop through options in select list
-            for (var i=0, len=select.options.length; i<len; i++) {
-                option_selected = select.options[i];
-                // check if selected
-                if ( option_selected.selected ) {
-                    // add to array of option elements to return from this function
-                        if(options_selected.length < {{group_size}}){
-                        options_selected.push(option_selected);
-                    // invoke optional callback function if provided
-                    if (fn) {
-                        fn(option_selected);
-                    }}
-                }
-            }
-            // return array containing references to selected option elements
-            return options_selected;
-           }
-        // example callback function (selected options passed one by one)
-        function callback(option_selected)
-            {
-                // display in textarea for this example
-                var display = document.getElementById('display');
-                display.innerHTML += option_selected.value + '\n';
-                }
-                // anonymous function onchange for select list with id cinema_id
-            document.getElementById('cinema_id').onchange = function(e)
-            {
-                // get reference to display textarea
-                var display = document.getElementById('display');
-                display.innerHTML = ''; // reset
-                // callback fn handles selected options
-                getSelected(this, callback);
-                var str = display.innerHTML.slice(0, -1);
-                display.innerHTML = str;
-            };
-            document.getElementById('cinema_form').onsubmit = function(e)
-            {
-                return false; // don't return online form
-            };
+
+        //Determining the movie selected by checking the position of the movies selected
+        for (var index = 0; index < checks.length; index++)
+          checks[index].onclick = checks_selected;
+        function checks_selected (event)
+        {
+        // The movies checked
+          var actual_checked = document.querySelectorAll(".checkbox:checked");
+        // The max number of boxes selected are the amount of people in the group
+          if (actual_checked.length >= {{group_size}} + 1)
+            return false;
+        }
+        document.getElementById('cinema_movie_check').onsubmit = function(e)
+        {
+            return false; // don't want to return thee form because it will refresh the page and everything is cleared
+        };
     </script>
+</div>
 {% endif %}
 {% endblock sidebar %}
