@@ -1,5 +1,6 @@
 {% extends "layout.html" %}
 {% block content %}
+<div class="col-md-8">
     <form method="POST" action="">
         {{ people_form.hidden_tag() }}
         <fieldset class="form-group">
@@ -20,7 +21,6 @@
         </div>
     </form>
 
-    <div id='movies_to_be_rated'></div>
     <form class="form-group" id="ratings_form" action="/group_recommendation" method="post"></form>
     <button class="btn btn-outline-info" type="submit" id="submit_rating" form="ratings_form">Submit</button>
 
@@ -29,149 +29,191 @@
     document.getElementById('submit_rating').style.visibility = 'hidden';
 
     var submit_form_already = 0;
-    function movies_selected()
+    function checked_movies()
     {
-    // check if this is the first time the form has been submitted
+        // check that the form has already been submitted onnce
       if (submit_form_already == 0)
       {
-      // Adding all the movies selected in the checkbox to an array
-          var movies = ['Users:'];
+          // Adding all the movies selected in the checkbox to an array
+          var movies = [];
           var movies_checked =document.querySelectorAll(".checkbox:checked");
             for(var index=0; index < movies_checked.length; index++)
-             {
-                movies.push(movies_checked[index].value)
-             }
-           // Ensure movies are checked
+            {
+               movies.push(movies_checked[index].value);
+            }
+           // if there are movies checked
           if(movies.length > 1)
           {
-          // Set each movie name to the value of a text input box
-          // For user display, so it's read only
-              for(var index=0; index<movies.length; index++)
-              {
-              // remove punctuation from movie title
-                var movie = movies[index].replace("'", "");
-                document.getElementById('movies_to_be_rated').innerHTML=
-                document.getElementById('movies_to_be_rated').innerHTML+
-                "<input class='form-control group_movie_title' type='text' value='"+movie+"' readonly>";
-              }
-              movie_ratings(movies.length, movies)
+              // make form button visible and change the name of the form button to 'reset'
               document.getElementById('submit_rating').style.visibility = 'visible';
-              document.getElementById("cinema_checked").value="Reset";
+              document.getElementById("cinema_checked").value="Reset"
               submit_form_already++;
+              return movies;
           }
-       }
-       else
-       {
-       // If the checkbox has already been completed, refresh the page to reset it
-           location.reload();
-       }
+          else
+          {
+            // if no movies are selected, return an empty array
+             return movies
+          }
+      }
+      else
+      {
+        // If the checkbox has already been completed, refresh the page to reset it
+          location.reload();
+      }
     }
 
-    function movie_ratings(size, movies)
+    function movies_selected()
     {
         var counter = 0;
-        var user_id = 1;
+        var user_id = 0;
+
         //Call form for inputs to be created
         var form = document.getElementById("ratings_form");
-        //Amount of input boxes needed
-        var input_numbers = {{group_size}}*size + 1
-        for(var index=0; index < input_numbers; index++)
+        // get the movies checked
+        movies_checked = checked_movies()
+        if(movies_checked.length > 1)
         {
-            var input = document.createElement('input');
-            input.type = 'number';
-            input.id = 'input_rating_' + index;
-            input.name = 'input_rating_' + index;
-            input.className = 'form-control group_movie_ratings'
-            input.min = 1;
-            input.max = 10;
-            input.required = true
-            //The first input box in each row, should be of type text to represent a user
-            if(index%size == 0)
+            var size = movies_checked.length+1
+            var group_rows = {{group_size}} + 1;
+
+            //Amount of input boxes needed
+            var input_numbers = group_rows*size;
+
+            for(var index=0; index < input_numbers; index++)
             {
-                 input.type = 'text';
-                 input.readOnly = true;
-                 // User ID is developed by a counter
-                 input.value = "User "+user_id++;
-            }
-            // Each user enters their own ratings on a separate form
-            if(counter<size)
-            {
-                form.appendChild(input);
-                counter++;
-             }
-            else
-            {
-                // Add a new line breaker
-                 linebreak = document.createElement("br");
-                 form.appendChild(linebreak);
-                 // Add current input value
-                 form.appendChild(input);
-                 // reset counter to 1 and not 0
-                 counter = 1
-            }
-            // Add the movies into the last input box, so it can be returned to the algorithms
-            if(index == {{group_size}}*size)
-            {
-                input.type = "hidden";
-                input.value = movies;
+                var input = document.createElement('input');
+
+                //The first input box in each row, should be of type text to represent a user
+                if(index%size == 0)
+                {
+                    // each user should get their own row, in relation to the movies
+                     var row_div = document.createElement("div");
+                     row_div.className = 'row'
+                     input.id = 'input_rating_' + index;
+                     input.name = 'input_rating_' + index;
+                     input.className = 'form-control'
+                     input.type = 'text';
+                     input.readOnly = true;
+                     // if user id is zero , then that is the row for the movies
+                     if(user_id == 0)
+                     {
+                        input.value = "User:";
+                        user_id++
+                     }
+                     else
+                     {
+                        // User ID is developed by a counter
+                        input.value = "User "+ user_id++ +":";
+                     }
+                }
+                else if(index-1 < size)
+                {
+                     // populating the input row with movies
+                     input.id = 'input_rating_' + index;
+                     input.name = 'input_rating_' + index;
+                     input.className = 'form-control'
+                     input.type = 'text';
+                     input.readOnly = true;
+                     // User ID is developed by a counter
+                     input.value = movies_checked[index-1];
+                }
+                else
+                {
+                    // the input for ratings
+                    input.type = 'number';
+                    input.id = 'input_rating_' + index;
+                    input.name = 'input_rating_' + index;
+                    input.className = 'form-control'
+                    input.min = 1;
+                    input.max = 10;
+                    input.required = true;
+                 }
+
+
+                // adding all inputs for each user in a div
+                if(counter<size)
+                {
+                    var div = document.createElement("div");
+                    div.className = 'col-md'
+                    // add the input to the div
+                    div.appendChild(input);
+                    row_div.appendChild(div);
+                    // add the div to the form
+                    form.appendChild(row_div);
+                    counter++;
+                 }
+                else
+                {
+                     // Add current input value
+                    var div = document.createElement("div");
+                    div.className = 'col-md'
+                    div.appendChild(input);
+                    row_div.appendChild(div);
+                    form.appendChild(row_div);
+                     // reset counter to 1 and not 0
+                     counter = 1
+                }
             }
         }
     };
 </script>
-{% endblock content %}
-
-{% block sidebar %}
-<div class="sidebar-section">
-    <h3 class="border-bottom mb-4">Cinema Movies</h3>
-    <p id="no_movies"></p>
-    {% if group_size %}
-         <form id="cinema_movie_check" method="POST" action="">
-            {{ cinema_form.hidden_tag() }}
-            <fieldset class="form-group">
-                {% if cinema_form.options.errors %}
-                <div class="invalid-feedback">
-                    {% for error in cinema_form.options.errors %}
-                        <span>{{ error }}</span>
-                    {% endfor %}
-                </div>
-                {% endif %}
-                {% for option in cinema_form.options %}
-                    <div class="form-check">
-                        {{ option(class="checkbox form-check-input") }}
-                        {{ option.label(class="form-check-label") }}
-                    </div>
-                {% endfor %}
-            </fieldset>
-            <div class="form-group">
-                {{ cinema_form.submit(id="cinema_checked", class="btn btn-outline-info") }}
-            </div>
-        </form>
-    <script type="text/javascript">
-    //Determine all checkboxes in a form
-        var checks = document.querySelectorAll(".checkbox");
-        //If there are no movies in the cinema
-        if(checks.length == 0)
-        {
-            document.getElementById("no_movies").innerHTML = "There are no movies in the cinema at the moment.";
-            document.getElementById('cinema_movie_check').style.visibility = 'hidden';
-        }
-
-        //Determining the movie selected by checking the position of the movies selected
-        for (var index = 0; index < checks.length; index++)
-          checks[index].onclick = checks_selected;
-        function checks_selected (event)
-        {
-        // The movies checked
-          var actual_checked = document.querySelectorAll(".checkbox:checked");
-        // The max number of boxes selected are the amount of people in the group
-          if (actual_checked.length >= {{group_size}} + 1)
-            return false;
-        }
-        document.getElementById('cinema_movie_check').onsubmit = function(e)
-        {
-            return false; // don't want to return thee form because it will refresh the page and everything is cleared
-        };
-    </script>
 </div>
-{% endif %}
-{% endblock sidebar %}
+
+<div class="col-md-4">
+    <div class="sidebar-section">
+        <h3 class="border-bottom mb-4">Cinema Movies</h3>
+        <p id="no_movies"></p>
+        {% if group_size %}
+             <form id="cinema_movie_check" method="POST" action="">
+                {{ cinema_form.hidden_tag() }}
+                <fieldset class="form-group">
+                    {% if cinema_form.options.errors %}
+                    <div class="invalid-feedback">
+                        {% for error in cinema_form.options.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    {% for option in cinema_form.options %}
+                        <div class="form-check">
+                            {{ option(class="checkbox form-check-input") }}
+                            {{ option.label(class="form-check-label") }}
+                        </div>
+                    {% endfor %}
+                </fieldset>
+                <div class="form-group">
+                    {{ cinema_form.submit(id="cinema_checked", class="btn btn-outline-info") }}
+                </div>
+            </form>
+        <script type="text/javascript">
+        //Determine all checkboxes in a form
+            var checks = document.querySelectorAll(".checkbox");
+            //If there are no movies in the cinema
+            if(checks.length == 0)
+            {
+                document.getElementById("no_movies").innerHTML = "There are no movies in the cinema at the moment.";
+                document.getElementById('cinema_movie_check').style.visibility = 'hidden';
+            }
+
+            //Determining the movie selected by checking the position of the movies selected
+            for (var index = 0; index < checks.length; index++)
+              checks[index].onclick = checks_selected;
+            function checks_selected (event)
+            {
+            // The movies checked
+              var actual_checked = document.querySelectorAll(".checkbox:checked");
+            // The max number of boxes selected are the amount of people in the group
+              if (actual_checked.length >= {{group_size}} + 1)
+                return false;
+            }
+            document.getElementById('cinema_movie_check').onsubmit = function(e)
+            {
+                // don't want to return thee form because it will refresh the page and everything is cleared
+                return false;
+            };
+        </script>
+    </div>
+    {% endif %}
+</div>
+{% endblock content %}

@@ -31,7 +31,8 @@ class CinemaMovies:
                         {"Parents and baby tickets": " pink "}, {"Ad/st screening times": " green "}]
         # Iterating thought the container of movies and returning the times and ticket types
         all_movie_times = {}
-        for contain in self.website()[0]:
+        data = self.website()
+        for contain in data[0]:
             ticket_times = []
             if contain.h2 is not None:
                 movie_name = contain.h2.getText()
@@ -49,4 +50,4 @@ class CinemaMovies:
                 if image[:1] == "/":
                     all_movie_times[movie_name] = {}
                 all_movie_times[movie_name][image] = ticket_times
-        return all_movie_times, self.website()[1]
+        return all_movie_times, data[1]
