@@ -14,9 +14,11 @@ class Algorithms:
 
     def process_data(self):
         ratings_data = []
-        movies = None
+        ratings = self.data.index("User 1:")
+        # getting all the movie names
+        movies = [movie for movie in self.data[1: ratings]]
         # iterating through the nested list
-        for value in self.data:
+        for value in self.data[ratings:]:
             try:
                 # Checking each value in the list to see if its an int or string
                 if 0 < int(value) < 11:
@@ -24,9 +26,7 @@ class Algorithms:
                     ratings_data.append(int(value))
             # Else if it is not an int the error is caught as a string cannot be casted as a float
             except ValueError:
-                # Separating all the movie names by a delimiter
-                # Then taking all the values after the first index
-                movies = value.split(",")[1:]
+                pass
         # Separate individual user ratings
         ratings = [ratings_data[index:index + len(movies)] for index in range(0, len(ratings_data), len(movies))]
         return movies, ratings

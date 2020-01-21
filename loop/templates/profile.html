@@ -1,37 +1,138 @@
 {% extends "layout.html" %}
 {% block content %}
-   <style>
-        .movie-card
-        {
-            width: 300px;
-            height: auto;
-            background: #e6ffff;
-            align-self: center;
-            border-radius: 2px;
-            border-shadow: 2px 2px 4px #867475
-            margin: 12px
-        }
-        .movie-list-container
-        {
-            display: flex;
-            flex-direction: row;
-            flex-wrap: wrap;
-            justify-content: space-around;
-        }
-
-        img
-        {
-            max-width: 100%;
-        }
-    </style>
-    <section>
-        <div class="movie-list-container">
-            {% for movie in data["results"] %}
-            <div class="movie-card">
-                <img src="https://image.tmdb.org/t/p/w500/{{movie.poster_path}}" class="movie-poster">
-                <h2> {{ movie.title }}</h2>
+    <div class="col-md-8">
+        <form method="POST" action="/movie_recommendation">
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+                    {{ form.search.label(class="form-control-label") }}
+                    {% if form.search.errors %}
+                        {{ form.search(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.search.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.search(class="form-control form-control-lg") }}
+                    {% endif %}
+            </fieldset>
+            <div class="form-group">
+                {{ form.submit(class="btn btn-outline-info") }}
             </div>
-            {% endfor %}
-        </div>
-    </section>
+        </form>
+    </div>
+
+    <div class="col-md-4">
+        <form method="POST" action="">
+                {{ form.hidden_tag() }}
+                <fieldset class="form-group">
+                    {{ genre_form.genre.label(class="form-control-label") }}
+
+                    {% if genre_form.genre.errors %}
+                        {{ genre_form.genre(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in genre_form.genre.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ genre_form.genre(class="form-control form-control-lg") }}
+                    {% endif %}
+                </fieldset>
+                <div class="form-group">
+                    {{ genre_form.submit(class="btn btn-outline-info") }}
+                </div>
+        </form>
+    </div>
+
+    <div id="profile_sidebar_id" class="profile_sidebar">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">x</a>
+        <div id="movie-description" class="container description"></div>
+    </div>
+
+    <div class="container">
+    {% if selected_genre %}
+        {% for category, movies in selected_genre.items() %}
+            <h1 class="section_heading">{{category}}</h1>
+                {% if movies %}
+                <div class="scrollmenu">
+                  {% for movie in movies %}
+                    <div class="movie_container">
+                        <input type="image" src="{{movie.image}}"
+                               data-description="<h1>{{ movie.title }}</h1>
+                                                 <h6><b>Description:</b> {{ movie.overview }}</h6>
+                                                 <h6><b>Popularity:</b> {{ movie.popularity }}</h6>
+                                                 <h6><b>Release Date:</b> {{ movie.release_date.date() }}</h6>"
+                               onclick="movie_content(this)" class="image-button img-fluid img-thumbnail"/>
+                        <p class="movie_title_scroll"> {{ movie.title }}</p>
+                    </div>
+                  {% endfor %}
+                </div>
+            {% else %}
+            <p>There are no movies of this genre.</p>
+            {% endif %}
+        {% endfor %}
+     {% endif %}
+    </div>
+
+    <div class="container">
+    {% for movies_categories in popular_latest_movies %}
+        {% for category, movies in movies_categories.items() %}
+            <h1 class="section_heading">{{category}}</h1>
+            <div class="scrollmenu">
+              {% for movie in movies %}
+                <div class="movie_container">
+                    <input type="image" src="{{movie.image}}"
+                           data-description="<h1>{{ movie.title }}</h1>
+                                             <h6><b>Description:</b> {{ movie.overview }}</h6>
+                                             <h6><b>Popularity:</b> {{ movie.popularity }}</h6>
+                                             <h6><b>Release Date:</b> {{ movie.release_date.date() }}</h6>"
+                           onclick="movie_content(this)" class="image-button img-fluid img-thumbnail"/>
+                    <p class="movie_title_scroll">{{ movie.title }}</p>
+                </div>
+              {% endfor %}
+            </div>
+        {% endfor %}
+    {% endfor %}
+    </div>
+
+<script>
+function movie_content(element)
+{
+    // transferring the data from the data-description to the movie-description id
+  var movie_description = document.getElementById("movie-description");
+  var description = element.getAttribute('data-description');
+  movie_description.innerHTML = description;
+    // each image acts an button, so it can be detect which one was clicked
+  var image_button = document.getElementsByClassName('image-button');
+    // remove all buttons that are not pressed from the array of image buttons
+  for (var index = 0; index < image_button.length; index++)
+  {
+    image_button[index].classList.remove('active-button');
+  }
+    // display the button value that was clicked
+  element.classList.add('active-button');
+  openNav();
+}
+
+function openNav()
+{
+    // check the size of the screen to determine the size of the side bar
+    if(screen.width > 450)
+    {
+        document.getElementById("profile_sidebar_id").style.width = "400px";
+    }
+    else
+    {
+        document.getElementById("profile_sidebar_id").style.width = "200px";
+    }
+}
+
+function closeNav()
+{
+    // close the side bar
+  document.getElementById("profile_sidebar_id").style.width = "0";
+}
+
+</script>
 {% endblock content %}
