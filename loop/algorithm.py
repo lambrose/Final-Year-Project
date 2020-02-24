@@ -1,3 +1,6 @@
+from flask_login import current_user
+
+from loop import db
 from loop.group_algorithm.utilitarian_strategies import UtilitarianStrategies
 from loop.group_algorithm.borda_count import BordaCount
 from loop.group_algorithm.copeland_rule import CopelandRule
@@ -5,6 +8,7 @@ from loop.group_algorithm.plurality_voting import PluralityVoting
 from loop.group_algorithm.approval_voting import ApprovalVoting
 from loop.group_algorithm.strategies import Strategies
 from itertools import groupby
+from loop.models import GroupResults
 
 
 class Algorithms:
@@ -95,4 +99,23 @@ class Algorithms:
         rank_movies = [{"movie": movies[0], "score": len(movies)} for movies in group_movies]
         # Sort the movies based on their score
         sort_ranked_movies = sorted(rank_movies, key=lambda k: k['score'], reverse=True)
+
+        results = []
+        winner = sort_ranked_movies[0]['movie']
+        for algorithm in algorithms:
+            if type(algorithm) == list:
+                if winner in algorithm:
+                    results.append(1)
+            else:
+                if winner == algorithm:
+                    results.append(2)
+                else:
+                    results.append(0)
+
+        group = GroupResults(winner=sort_ranked_movies[0]['movie'], additive=results[0], multiplicative=results[1],
+                             borda=results[2], copeland=results[3], plurality_voting=results[4], approval=results[5],
+                             least_misery=results[6], most_pleasure=results[7], average_without_misery=results[8],
+                             author=current_user)
+        db.session.add(group)
+        db.session.commit()
         return sort_ranked_movies

@@ -1,138 +1,173 @@
 {% extends "layout.html" %}
 {% block content %}
-    <div class="col-md-8">
-        <form method="POST" action="/movie_recommendation">
-            {{ form.hidden_tag() }}
-            <fieldset class="form-group">
-                    {{ form.search.label(class="form-control-label") }}
-                    {% if form.search.errors %}
-                        {{ form.search(class="form-control form-control-lg is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.search.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.search(class="form-control form-control-lg") }}
-                    {% endif %}
-            </fieldset>
-            <div class="form-group">
-                {{ form.submit(class="btn btn-outline-info") }}
-            </div>
-        </form>
-    </div>
-
-    <div class="col-md-4">
-        <form method="POST" action="">
-                {{ form.hidden_tag() }}
-                <fieldset class="form-group">
-                    {{ genre_form.genre.label(class="form-control-label") }}
-
-                    {% if genre_form.genre.errors %}
-                        {{ genre_form.genre(class="form-control form-control-lg is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in genre_form.genre.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ genre_form.genre(class="form-control form-control-lg") }}
-                    {% endif %}
-                </fieldset>
-                <div class="form-group">
-                    {{ genre_form.submit(class="btn btn-outline-info") }}
-                </div>
-        </form>
-    </div>
-
-    <div id="profile_sidebar_id" class="profile_sidebar">
-        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">x</a>
-        <div id="movie-description" class="container description"></div>
-    </div>
-
     <div class="container">
-    {% if selected_genre %}
-        {% for category, movies in selected_genre.items() %}
-            <h1 class="section_heading">{{category}}</h1>
-                {% if movies %}
-                <div class="scrollmenu">
-                  {% for movie in movies %}
-                    <div class="movie_container">
-                        <input type="image" src="{{movie.image}}"
-                               data-description="<h1>{{ movie.title }}</h1>
-                                                 <h6><b>Description:</b> {{ movie.overview }}</h6>
-                                                 <h6><b>Popularity:</b> {{ movie.popularity }}</h6>
-                                                 <h6><b>Release Date:</b> {{ movie.release_date.date() }}</h6>"
-                               onclick="movie_content(this)" class="image-button img-fluid img-thumbnail"/>
-                        <p class="movie_title_scroll"> {{ movie.title }}</p>
-                    </div>
-                  {% endfor %}
-                </div>
-            {% else %}
-            <p>There are no movies of this genre.</p>
-            {% endif %}
-        {% endfor %}
-     {% endif %}
+        <div class="row">
+          <div class="col">
+              <legend class="border-bottom mb-4">Liked Movies</legend>
+              <div class="profile_sections">
+                  <ul class="list-group list-group-flush">
+                      {% for like in likes %}
+                        <li class="list-group-item">
+                            <h5 class="profileHeadingSection mt-2">{{ like.movie }}</h5>
+                            <button type="button" class="btn profileHeadingBtn" data-toggle="modal" data-target="#removeLikeModal{{ loop.index }}"><i class="fas fa-bars"></i></button>
+                        </li>
+
+                         <!-- Modal -->
+                        <div class="modal fade" id="removeLikeModal{{ loop.index }}" tabindex="-1" role="dialog" aria-labelledby="removeLikeModalLabel" aria-hidden="true">
+                          <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h4 class="modal-title" id="removeLikeModalLabel">Movie Details</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                              </div>
+                                <div class="modal-body">
+                                    <p><b>User: </b>{{ like.author.first_name }} {{ like.author.last_name }}</p>
+                                    <p><b>Movie: </b>{{ like.movie }}</p>
+                                    <p><b>Date added: </b>{{ like.vote_date.date() }}</p>
+                              </div>
+                              <div class="modal-footer">
+                                <form action="{{ url_for('update_vote', vote_id=like.id) }}" method="post">
+                                  <input class="btn btn-primary" type="submit" value="Dislike">
+                                 </form>
+
+                                 <form action="{{ url_for('delete_vote', vote_id=like.id) }}" method="post">
+                                  <input class="btn btn-danger" type="submit" value="Remove">
+                                 </form>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      {% endfor %}
+                  </ul>
+              </div>
+          </div>
+          <div class="col">
+              <legend class="border-bottom mb-4">Disliked Movies</legend>
+              <div class="profile_sections">
+                  <ul class="list-group list-group-flush">
+                      {% for dislike in dislikes %}
+                        <li class="list-group-item">
+                            <h5 class="profileHeadingSection mt-2">{{ dislike.movie }}</h5>
+                            <button type="button" class="btn profileHeadingBtn" data-toggle="modal" data-target="#removeDislikeModal{{ loop.index }}"><i class="fas fa-bars"></i></button>
+                        </li>
+
+                         <!-- Modal -->
+                        <div class="modal fade" id="removeDislikeModal{{ loop.index }}" tabindex="-1" role="dialog" aria-labelledby="removeDislikeModalLabel" aria-hidden="true">
+                          <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h4 class="modal-title" id="removeDislikeModalLabel">Movie Details</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                              </div>
+                                <div class="modal-body">
+                                    <p><b>User: </b>{{ dislike.author.first_name }} {{ dislike.author.last_name }}</p>
+                                    <p><b>Movie: </b>{{ dislike.movie }}</p>
+                                    <p><b>Date added: </b>{{ dislike.vote_date.date() }}</p>
+                              </div>
+                              <div class="modal-footer">
+                                <form action="{{ url_for('update_vote', vote_id=dislike.id) }}" method="post">
+                                  <input class="btn btn-primary" type="submit" value="Like">
+                                 </form>
+
+                                 <form action="{{ url_for('delete_vote', vote_id=dislike.id) }}" method="post">
+                                  <input class="btn btn-danger" type="submit" value="Remove">
+                                 </form>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      {% endfor %}
+                  </ul>
+              </div>
+          </div>
+     </div>
+      <div class="row">
+          <div class="col mt-4">
+              <legend class="border-bottom mb-4">Group History</legend>
+              <div class="profile_sections">
+                  <ul class="list-group list-group-flush">
+                      {% for record in history %}
+                        <li class="list-group-item">
+                            <h5 class="profileHeadingSection mt-2">{{ record[0] }}</h5>
+                            <button type="button" class="btn profileHeadingBtn" data-toggle="modal" data-target="#removeHistoryModal{{ loop.index }}"><i class="fas fa-bars"></i></button>
+                        </li>
+
+                         <!-- Modal -->
+                        <div class="modal fade" id="removeHistoryModal{{ loop.index }}" tabindex="-1" role="dialog" aria-labelledby="removeHistoryModalLabel" aria-hidden="true">
+                          <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h4 class="modal-title" id="removeHistoryModalLabel">{{ record[0] }} Details</h4>
+                                  <div class="dropdown">
+                                    <button class="btn dropdown-toggle" type="button" data-toggle="dropdown"><i class="fas fa-check-circle green_icon"></i>
+                                    <span class="caret"></span></button>
+                                    <ul class="group_icon dropdown-menu">
+                                        <li><p>Returned the preferred movie</p></li>
+                                    </ul>
+                                  </div>
+                                  <div class="dropdown">
+                                    <button class="btn dropdown-toggle" type="button" data-toggle="dropdown"><i class="fas fa-exclamation-circle blue_icon"></i>
+                                    <span class="caret"></span></button>
+                                    <ul class="group_icon dropdown-menu">
+                                        <li><p>Returned multiple movies that contained the preferred movie</p></li>
+                                    </ul>
+                                  </div>
+                                  <div class="dropdown">
+                                    <button class="btn dropdown-toggle" type="button" data-toggle="dropdown"><i class="fas fa-times-circle red_icon"></i>
+                                    <span class="caret"></span></button>
+                                    <ul class="group_icon dropdown-menu">
+                                        <li><p>Did not return the the preferred movie</p></li>
+                                    </ul>
+                                  </div>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                              </div>
+                                <div class="modal-body">
+                                    <p><b>User: </b>{{ record[1] }} {{ record[2]}}</p>
+                                    <p><b>Additive Utilitarian Algorithm: </b><i class="{{ record[3] }}"></i></p>
+                                    <p><b>Multiplicative Utilitarian Algorithm: </b><i class="{{ record[4] }}"></i></p>
+                                    <p><b>Borda Count Algorithm: </b><i class="{{ record[5] }}"></i></p>
+                                    <p><b>Copeland Rule Algorithm: </b><i class="{{ record[6] }}"></i></p>
+                                    <p><b>Plurality Voting Algorithm: </b><i class="{{ record[7] }}"></i></p>
+                                    <p><b>Approval Voting Algorithm: </b><i class="{{ record[8] }}"></i></p>
+                                    <p><b>Least Misery Algorithm: </b><i class="{{ record[9] }}"></i></p>
+                                    <p><b>Most Pleasure Algorithm: </b><i class="{{ record[10] }}"></i></p>
+                                    <p><b>Average Without Misery Algorithm: </b><i class="{{ record[11] }}"></i></p>
+                                    <p><b>Date added: </b>{{ record[12].date() }}</p>
+                              </div>
+                              <div class="modal-footer">
+                                  <p>to be done</p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      {% endfor %}
+                  </ul>
+              </div>
+          </div>
+          <div class="col mt-4">
+              <legend class="border-bottom mb-4">Group Algorithms Performances</legend>
+              <div class="profile_graph_section ct-chart ct-golden-section"></div>
+                <script>
+                    new Chartist.Bar('.ct-chart',
+                     {
+                          labels: ['Add', 'Multi', 'Borda', 'Cope', 'Plural', 'Approv', 'L.M.', 'M.P.', 'A.W.M'],
+                          series: [{{group_values}}]
+                     },
+                     {
+                          seriesBarDistance: 30,
+                          axisX:
+                          {
+                            showGrid: false
+                          }
+                     });
+            </script>
+          </div>
+        </div>
     </div>
-
-    <div class="container">
-    {% for movies_categories in popular_latest_movies %}
-        {% for category, movies in movies_categories.items() %}
-            <h1 class="section_heading">{{category}}</h1>
-            <div class="scrollmenu">
-              {% for movie in movies %}
-                <div class="movie_container">
-                    <input type="image" src="{{movie.image}}"
-                           data-description="<h1>{{ movie.title }}</h1>
-                                             <h6><b>Description:</b> {{ movie.overview }}</h6>
-                                             <h6><b>Popularity:</b> {{ movie.popularity }}</h6>
-                                             <h6><b>Release Date:</b> {{ movie.release_date.date() }}</h6>"
-                           onclick="movie_content(this)" class="image-button img-fluid img-thumbnail"/>
-                    <p class="movie_title_scroll">{{ movie.title }}</p>
-                </div>
-              {% endfor %}
-            </div>
-        {% endfor %}
-    {% endfor %}
-    </div>
-
-<script>
-function movie_content(element)
-{
-    // transferring the data from the data-description to the movie-description id
-  var movie_description = document.getElementById("movie-description");
-  var description = element.getAttribute('data-description');
-  movie_description.innerHTML = description;
-    // each image acts an button, so it can be detect which one was clicked
-  var image_button = document.getElementsByClassName('image-button');
-    // remove all buttons that are not pressed from the array of image buttons
-  for (var index = 0; index < image_button.length; index++)
-  {
-    image_button[index].classList.remove('active-button');
-  }
-    // display the button value that was clicked
-  element.classList.add('active-button');
-  openNav();
-}
-
-function openNav()
-{
-    // check the size of the screen to determine the size of the side bar
-    if(screen.width > 450)
-    {
-        document.getElementById("profile_sidebar_id").style.width = "400px";
-    }
-    else
-    {
-        document.getElementById("profile_sidebar_id").style.width = "200px";
-    }
-}
-
-function closeNav()
-{
-    // close the side bar
-  document.getElementById("profile_sidebar_id").style.width = "0";
-}
-
-</script>
 {% endblock content %}

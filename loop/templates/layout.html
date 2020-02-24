@@ -7,7 +7,9 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous"></head>
+    <script src="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>
+    <link href="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.css" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
 
     {% if title %}
@@ -16,11 +18,15 @@
         <title>Loop</title>
     {% endif %}
 </head>
-<body>
+<body data-spy="scroll" data-target=".scrollmenu">
     <header class="site-header">
       <nav class="navbar navbar-expand-md navbar-dark nb-colour fixed-top">
         <div class="container">
-            <a class="navbar-brand mb-0 h1" href="/"><div class="logo">Loop</div></a>
+            {% if current_user.is_authenticated %}
+            <a class="navbar-brand mb-0 h1" href="{{ url_for('watch') }}"><div class="logo">Loop</div></a>
+            {% else %}
+                <a class="navbar-brand mb-0 h1" href="{{ url_for('login') }}"><div class="logo">Loop</div></a>
+              {% endif %}
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
@@ -28,6 +34,7 @@
             <div class="navbar-nav mr-auto">
                 {% if current_user.is_authenticated %}
                 <a class="nav-item nav-link" href="{{ url_for('profile') }}">Profile</a>
+                <a class="nav-item nav-link" href="{{ url_for('watch') }}">Watch</a>
                 <a class="nav-item nav-link" href="{{ url_for('group') }}">Group</a>
                 {% endif %}
             </div>
@@ -36,7 +43,7 @@
               {% if current_user.is_authenticated %}
                 <li class="dropdown">
                   <a class="nav-item nav-link dropdown-toggle" data-toggle="dropdown">{{ current_user.first_name }} {{ current_user.last_name }}</a>
-                  <ul class="dropdown-menu">
+                  <ul class="nav_dropdown dropdown-menu">
                     <li><a class="nav-item nav-link" href="{{ url_for('logout') }}">Logout</a></li>
                   </ul>
                 </li>
@@ -55,7 +62,7 @@
           {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
               {% for category, message in messages %}
-                <div class="alert alert-{{ category }}">
+                <div class="alert alert-{{ category }} col-md-8">
                   {{ message }}
                 </div>
               {% endfor %}

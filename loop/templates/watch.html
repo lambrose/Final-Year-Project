@@ -1,0 +1,259 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div class="col-md-8">
+        <form method="POST" action="/movie_recommendation">
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+                    {{ form.search.label(class="form-control-label") }}
+                    {% if form.search.errors %}
+                        {{ form.search(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.search.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.search(class="form-control form-control-lg") }}
+                    {% endif %}
+            </fieldset>
+            <div class="form-group">
+                {{ form.submit(class="btn btn-outline-info") }}
+            </div>
+        </form>
+    </div>
+
+    <div class="col-md-4">
+        <form method="POST" action="">
+                {{ genre_form.hidden_tag() }}
+                <fieldset class="form-group">
+                    {{ genre_form.genre.label(class="form-control-label") }}
+
+                    {% if genre_form.genre.errors %}
+                        {{ genre_form.genre(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in genre_form.genre.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ genre_form.genre(class="form-control form-control-lg") }}
+                    {% endif %}
+                </fieldset>
+                <div class="form-group">
+                    {{ genre_form.submit(class="btn btn-outline-info") }}
+                </div>
+        </form>
+    </div>
+
+    <div id="profile_sidebar_id" class="profile_sidebar">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">x</a>
+        <div id="movie-description" class="container description"></div>
+        <div class="container">
+          <div class="row">
+            <div class="col">
+                <form method='POST' action=''>
+                    {{ like_form.hidden_tag() }}
+                    <fieldset class='form-group'>
+                       {% if like_form.like_movie.errors %}
+                            {{ like_form.like_movie(class='form-control form-control-lg is-invalid') }}
+                            <div class='invalid-feedback'>
+                                {% for error in like_form.like_movie.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ like_form.like_movie(class='form-control form-control-lg') }}
+                        {% endif %}
+                    </fieldset>
+                    <div class='form-group'>
+                        {{ like_form.submit(class='btn btn-outline-info') }}
+                    </div>
+                </form>
+            </div>
+            <div class="col">
+                <form method='POST' action=''>
+                   {{ dislike_form.hidden_tag() }}
+                   <fieldset class='form-group'>
+                      {% if dislike_form.dislike_movie.errors %}
+                          {{ dislike_form.dislike_movie(class='form-control form-control-lg is-invalid') }}
+                          <div class='invalid-feedback'>
+                            {% for error in dislike_form.dislike_movie.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                          </div>
+                       {% else %}
+                            {{ dislike_form.dislike_movie(class='form-control form-control-lg') }}
+                       {% endif %}
+                   </fieldset>
+                   <div class='form-group'>
+                       {{ dislike_form.submit(class='btn btn-outline-info') }}
+                   </div>
+                </form>
+            </div>
+          </div>
+            <div class="row">
+            <div class="col">
+            <h6 id="check_like" class="ml-2 check_like"></h6>
+            </div>
+           <div class="col">
+            <h6 id="check_dislike" class="ml-2 check_dislike"></h6>
+           </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+    {% if selected_genre %}
+        {% for category, movies in selected_genre.items() %}
+            <h1 class="section_heading">{{category}}</h1>
+                {% if movies %}
+                <div class="scrollmenu">
+                  {% for movie in movies %}
+                    <div class="movie_container">
+                        <a id="{{ movie.title }}" href="#{{ movie.title }}">
+                        <input type="image" src="{{movie.image}}"
+                               data-description="<h1>{{ movie.title }}</h1>
+                                                 <h6><b>Description:</b> {{ movie.overview }}</h6>
+                                                 <h6><b>Popularity:</b> {{ movie.popularity }}</h6>
+                                                 <h6><b>Release Date:</b> {{ movie.release_date.date() }}</h6>"
+                               value="{{ movie.title }}"
+                               onclick="movie_content(this)" class="image-button img-fluid img-thumbnail"/>
+                        </a>
+                        <p class="movie_title_scroll"> {{ movie.title }}</p>
+                    </div>
+                  {% endfor %}
+                </div>
+            {% else %}
+            <p>There are no movies of this genre.</p>
+            {% endif %}
+        {% endfor %}
+     {% endif %}
+    </div>
+
+    <div class="container">
+    {% if collaborative_filter %}
+        {% for category, movies in collaborative_filter.items() %}
+            <h1 class="section_heading">{{category}}</h1>
+            <div class="scrollmenu">
+              {% for movie_container in movies %}
+                  {% for movie in movie_container[0] %}
+                    <div class="movie_container">
+                        <a id="{{ movie.title }}1" href="#{{ movie.title }}1">
+                            <input type="image" src="{{movie.image}}" data-description="<h1>{{ movie.title }}</h1>
+                                                 <h6><b>Description:</b> {{ movie.overview }}</h6>
+                                                 <h6><b>Popularity:</b> {{ movie.popularity }}</h6>
+                                                 <h6><b>Release Date:</b> {{ movie.release_date.date() }}</h6>
+                                                 <br>
+                                                 <h6><b>{{ movie_container[1] }}</b></h6>"
+                                   value="{{already_voted.get(movie.title)}}"
+                               onclick="movie_content(this)" class="image-button img-fluid img-thumbnail"/>
+                        </a>
+                        <p class="movie_title_scroll">{{ movie.title }}</p>
+                    </div>
+                   {% endfor %}
+              {% endfor %}
+            </div>
+        {% endfor %}
+     {% endif %}
+    </div>
+
+    <div class="container">
+    {% for movies_categories in popular_latest_movies %}
+        {% for category, movies in movies_categories.items() %}
+            <h1 class="section_heading">{{category}}</h1>
+            <div class="scrollmenu">
+              {% for movie in movies %}
+                <div class="movie_container">
+                    <a id="{{ movie.title }}2" href="#{{ movie.title }}2">
+                        <input type="image" src="{{movie.image}}" data-description="<h1>{{ movie.title }}</h1>
+                                             <h6><b>Description:</b> {{ movie.overview }}</h6>
+                                             <h6><b>Popularity:</b> {{ movie.popularity }}</h6>
+                                             <h6><b>Release Date:</b> {{ movie.release_date.date() }}</h6>"
+                               value="{{already_voted.get(movie.title)}}"
+                           onclick="movie_content(this)" class="image-button img-fluid img-thumbnail"/>
+                    </a>
+                    <p class="movie_title_scroll">{{ movie.title }}</p>
+                </div>
+              {% endfor %}
+            </div>
+        {% endfor %}
+    {% endfor %}
+    </div>
+
+<script>
+function movie_content(element)
+{
+    // transferring the data from the data-description to the movie-description id
+  var movie_description = document.getElementById("movie-description");
+  var description = element.getAttribute('data-description');
+
+  var liked_input = document.getElementById("like_movie");
+  var disliked_input = document.getElementById("dislike_movie");
+  var domParser = new DOMParser();
+  var docElement = domParser.parseFromString(description, "text/html").documentElement;
+  var movie_title = docElement.getElementsByTagName("H1")[0].innerHTML;
+  liked_input.value = movie_title;
+  disliked_input.value = movie_title;
+  // document.getElementById("current_movie").innerHTML = movie_title;
+
+   var vote = element.getAttribute('value');
+   if (vote != 'None')
+   {
+        if (vote[1] == '1')
+       {
+            document.getElementById("check_like").innerHTML = "Liked";
+       }
+       else
+       {
+            document.getElementById("check_like").innerHTML = " ";
+       }
+
+        if (vote[4] == '1')
+       {
+            document.getElementById("check_dislike").innerHTML = "Disliked";
+       }
+       else
+       {
+            document.getElementById("check_dislike").innerHTML = " ";
+       }
+   }
+   else
+   {
+        document.getElementById("check_like").innerHTML = " ";
+        document.getElementById("check_dislike").innerHTML = " ";
+   }
+
+  movie_description.innerHTML = description;
+    // each image acts an button, so it can be detect which one was clicked
+  var image_button = document.getElementsByClassName('image-button');
+    // remove all buttons that are not pressed from the array of image buttons
+  for (var index = 0; index < image_button.length; index++)
+  {
+    image_button[index].classList.remove('active-button');
+  }
+    // display the button value that was clicked
+  element.classList.add('active-button');
+  openNav();
+}
+
+function openNav()
+{
+    // check the size of the screen to determine the size of the side bar
+    if(screen.width > 450)
+    {
+        document.getElementById("profile_sidebar_id").style.width = "400px";
+    }
+    else
+    {
+        document.getElementById("profile_sidebar_id").style.width = "200px";
+    }
+}
+
+function closeNav()
+{
+    // close the side bar
+  document.getElementById("profile_sidebar_id").style.width = "0";
+}
+
+</script>
+{% endblock content %}
