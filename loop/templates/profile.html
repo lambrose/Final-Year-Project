@@ -28,11 +28,11 @@
                                     <p><b>Date added: </b>{{ like.vote_date.date() }}</p>
                               </div>
                               <div class="modal-footer">
-                                <form action="{{ url_for('update_vote', vote_id=like.id) }}" method="post">
+                                <form action="{{ url_for('main.update_vote', vote_id=like.id) }}" method="post">
                                   <input class="btn btn-primary" type="submit" value="Dislike">
                                  </form>
 
-                                 <form action="{{ url_for('delete_vote', vote_id=like.id) }}" method="post">
+                                 <form action="{{ url_for('main.delete_vote', vote_id=like.id) }}" method="post">
                                   <input class="btn btn-danger" type="submit" value="Remove">
                                  </form>
                               </div>
@@ -69,11 +69,11 @@
                                     <p><b>Date added: </b>{{ dislike.vote_date.date() }}</p>
                               </div>
                               <div class="modal-footer">
-                                <form action="{{ url_for('update_vote', vote_id=dislike.id) }}" method="post">
+                                <form action="{{ url_for('main.update_vote', vote_id=dislike.id) }}" method="post">
                                   <input class="btn btn-primary" type="submit" value="Like">
                                  </form>
 
-                                 <form action="{{ url_for('delete_vote', vote_id=dislike.id) }}" method="post">
+                                 <form action="{{ url_for('main.delete_vote', vote_id=dislike.id) }}" method="post">
                                   <input class="btn btn-danger" type="submit" value="Remove">
                                  </form>
                               </div>

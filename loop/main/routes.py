@@ -1,61 +1,21 @@
 import re
-from flask import render_template, url_for, flash, redirect, request
-from loop import app, db, bcrypt
+from flask import render_template, url_for, flash, redirect, request, Blueprint
+from loop import db
 from loop.collaborative_filter import CollaborativeFilter
-from loop.forms import RegistrationForm, LoginForm, GroupForm, cinema_list, MovieSearchForm, SelectGenreForm
-from loop.forms import LikeForm, DislikeForm
+from loop.main.forms import GroupForm, cinema_list, MovieSearchForm, SelectGenreForm, LikeForm, DislikeForm
 from loop.group_history import GroupHistory
-from loop.models import Users, Movies, Preferences
-from flask_login import login_user, current_user, logout_user, login_required
+from loop.models import Movies, Preferences
+from flask_login import current_user, login_required
 from loop.cinema import CinemaMovies
 from loop.algorithm import Algorithms
 from loop.movie_search import MovieSearch
 from loop.movie_categories import Genres
 import unidecode
 
-# selected_genre = {}
+main = Blueprint('main', __name__)
 
 
-@app.route("/register", methods=['GET', 'POST'])
-def register():
-    if current_user.is_authenticated:
-        return redirect(url_for('watch'))
-    form = RegistrationForm()
-    if form.validate_on_submit():
-        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user = Users(first_name=form.first_name.data, last_name=form.last_name.data, email=form.email.data,
-                     password=hashed_password)
-        db.session.add(user)
-        db.session.commit()
-        flash('Your account has been created! You are now able to log in', 'success')
-        return redirect(url_for('login'))
-    return render_template('register.html', title='Register', form=form)
-
-
-@app.route("/", methods=['GET', 'POST'])
-@app.route("/login", methods=['GET', 'POST'])
-def login():
-    if current_user.is_authenticated:
-        return redirect(url_for('watch'))
-    form = LoginForm()
-    if form.validate_on_submit():
-        user = Users.query.filter_by(email=form.email.data).first()
-        if user and bcrypt.check_password_hash(user.password, form.password.data):
-            login_user(user, remember=form.remember.data)
-            next_page = request.args.get('next')
-            return redirect(next_page) if next_page else redirect(url_for('watch'))
-        else:
-            flash('Login Unsuccessful. Please check email and password', 'danger')
-    return render_template('login.html', title='Login', form=form)
-
-
-@app.route("/logout")
-def logout():
-    logout_user()
-    return redirect(url_for('login'))
-
-
-@app.route("/watch", methods=['GET', 'POST'])
+@main.route("/watch", methods=['GET', 'POST'])
 @login_required
 def watch():
     form = MovieSearchForm()
@@ -101,7 +61,7 @@ def watch():
                            collaborative_filter=collaborative_filter.get_recommendation())
 
 
-@app.route("/movie_recommendation", methods=['GET', 'POST'])
+@main.route("/movie_recommendation", methods=['GET', 'POST'])
 @login_required
 def movie_recommendation():
     movie = request.form.get("search")
@@ -113,10 +73,10 @@ def movie_recommendation():
                                    movies=movies.get_recommendation())
         else:
             flash('Search Unsuccessful. Please check spelling again.', 'danger')
-    return redirect(url_for('watch'))
+    return redirect(url_for('main.watch'))
 
 
-@app.route("/profile", methods=['GET', 'POST'])
+@main.route("/profile", methods=['GET', 'POST'])
 @login_required
 def profile():
     likes = Preferences.query.filter_by(like=1, user_id=current_user.id)
@@ -127,7 +87,7 @@ def profile():
     return render_template('profile.html', likes=likes, dislikes=dislikes, history=history, group_values=ranking)
 
 
-@app.route("/profile/<int:vote_id>/update", methods=['GET', 'POST'])
+@main.route("/profile/<int:vote_id>/update", methods=['GET', 'POST'])
 @login_required
 def update_vote(vote_id):
     movie = Preferences.query.get_or_404(vote_id)
@@ -140,10 +100,10 @@ def update_vote(vote_id):
         movie.dislike = 0
         flash(movie.movie + ' has been added to your liked list', 'success')
     db.session.commit()
-    return redirect(url_for('profile'))
+    return redirect(url_for('main.profile'))
 
 
-@app.route("/profile/<int:vote_id>/delete", methods=['POST'])
+@main.route("/profile/<int:vote_id>/delete", methods=['POST'])
 @login_required
 def delete_vote(vote_id):
     movie = Preferences.query.get_or_404(vote_id)
@@ -153,10 +113,10 @@ def delete_vote(vote_id):
         flash(movie.movie + ' has been removed from your liked list', 'success')
     else:
         flash(movie.movie + ' has been removed from your disliked list', 'success')
-    return redirect(url_for('profile'))
+    return redirect(url_for('main.profile'))
 
 
-@app.route("/group", methods=['GET', 'POST'])
+@main.route("/group", methods=['GET', 'POST'])
 @login_required
 def group():
     cinema_movies = CinemaMovies()
@@ -175,7 +135,7 @@ def format_movie_title(movie):
     return unaccented_string.replace(' ', '-')
 
 
-@app.route("/group_recommendation", methods=['GET', 'POST'])
+@main.route("/group_recommendation", methods=['GET', 'POST'])
 @login_required
 def get_group_recommendation():
     cinema_movies = CinemaMovies()
@@ -210,4 +170,4 @@ def get_group_recommendation():
         return render_template('group_recommendation.html', title='Group recommendation', top_movie=top_movie,
                                other_movies=other_movies)
     else:
-        return redirect(url_for('group'))
+        return redirect(url_for('main.group'))
