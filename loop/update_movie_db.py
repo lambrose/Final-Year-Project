@@ -65,7 +65,3 @@ class UpdateMovieDatabase:
                         print(movie)
                 # reset boolean value
                 is_valid = True
-
-
-update_db = UpdateMovieDatabase()
-update_db.insert_movies()
