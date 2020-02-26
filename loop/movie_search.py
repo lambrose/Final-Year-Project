@@ -10,7 +10,8 @@ class MovieSearch:
         self.movie_details = movie_details
 
     def compare_data(self):
-        data = Movies.query.all()
+        # getting all movies that are animated or not depending on the movie searched
+        data = Movies.query.filter_by(animation=self.movie_details.animation)
         # Converting the list of SQLalchemy movies objects into a data frame of movies
         movie_data_frame = pd.DataFrame([(d.title, d.overview, d.image, d.popularity, d.release_date) for d in data],
                                         columns=['title', 'overview', 'image', 'popularity', 'release_date'])
