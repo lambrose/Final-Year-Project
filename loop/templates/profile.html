@@ -92,7 +92,7 @@
                   <ul class="list-group list-group-flush">
                       {% for record in history %}
                         <li class="list-group-item">
-                            <h5 class="profileHeadingSection mt-2">{{ record[0] }}</h5>
+                            <h5 class="profileHeadingSection mt-2">{{ record[1] }}</h5>
                             <button type="button" class="btn profileHeadingBtn" data-toggle="modal" data-target="#removeHistoryModal{{ loop.index }}"><i class="fas fa-bars"></i></button>
                         </li>
 
@@ -101,7 +101,7 @@
                           <div class="modal-dialog" role="document">
                             <div class="modal-content">
                               <div class="modal-header">
-                                <h4 class="modal-title" id="removeHistoryModalLabel">{{ record[0] }} Details</h4>
+                                <h4 class="modal-title" id="removeHistoryModalLabel">{{ record[1] }} Details</h4>
                                   <div class="dropdown">
                                     <button class="btn dropdown-toggle" type="button" data-toggle="dropdown"><i class="fas fa-check-circle green_icon"></i>
                                     <span class="caret"></span></button>
@@ -128,20 +128,22 @@
                                 </button>
                               </div>
                                 <div class="modal-body">
-                                    <p><b>User: </b>{{ record[1] }} {{ record[2]}}</p>
-                                    <p><b>Additive Utilitarian Algorithm: </b><i class="{{ record[3] }}"></i></p>
-                                    <p><b>Multiplicative Utilitarian Algorithm: </b><i class="{{ record[4] }}"></i></p>
-                                    <p><b>Borda Count Algorithm: </b><i class="{{ record[5] }}"></i></p>
-                                    <p><b>Copeland Rule Algorithm: </b><i class="{{ record[6] }}"></i></p>
-                                    <p><b>Plurality Voting Algorithm: </b><i class="{{ record[7] }}"></i></p>
-                                    <p><b>Approval Voting Algorithm: </b><i class="{{ record[8] }}"></i></p>
-                                    <p><b>Least Misery Algorithm: </b><i class="{{ record[9] }}"></i></p>
-                                    <p><b>Most Pleasure Algorithm: </b><i class="{{ record[10] }}"></i></p>
-                                    <p><b>Average Without Misery Algorithm: </b><i class="{{ record[11] }}"></i></p>
-                                    <p><b>Date added: </b>{{ record[12].date() }}</p>
+                                    <p><b>User: </b>{{ record[2] }} {{ record[3]}}</p>
+                                    <p><b>Additive Utilitarian Algorithm: </b><i class="{{ record[4] }}"></i></p>
+                                    <p><b>Multiplicative Utilitarian Algorithm: </b><i class="{{ record[5] }}"></i></p>
+                                    <p><b>Borda Count Algorithm: </b><i class="{{ record[6] }}"></i></p>
+                                    <p><b>Copeland Rule Algorithm: </b><i class="{{ record[7] }}"></i></p>
+                                    <p><b>Plurality Voting Algorithm: </b><i class="{{ record[8] }}"></i></p>
+                                    <p><b>Approval Voting Algorithm: </b><i class="{{ record[9] }}"></i></p>
+                                    <p><b>Least Misery Algorithm: </b><i class="{{ record[10] }}"></i></p>
+                                    <p><b>Most Pleasure Algorithm: </b><i class="{{ record[11] }}"></i></p>
+                                    <p><b>Average Without Misery Algorithm: </b><i class="{{ record[12] }}"></i></p>
+                                    <p><b>Date added: </b>{{ record[13].date() }}</p>
                               </div>
                               <div class="modal-footer">
-                                  <p>to be done</p>
+                                  <form action="{{ url_for('main.delete_group_vote', group_id=record[0]) }}" method="post">
+                                  <input class="btn btn-danger" type="submit" value="Remove">
+                                  </form>
                               </div>
                             </div>
                           </div>

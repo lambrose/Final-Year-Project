@@ -17,11 +17,11 @@ class GroupHistory:
         for record in query:
             entry = [record.additive, record.multiplicative, record.borda, record.copeland, record.plurality_voting,
                      record.approval, record.least_misery, record.most_pleasure, record.average_without_misery]
-            formatted_entry = [record.winner, record.author.first_name, record.author.last_name]
-            for s in entry:
-                if s == 2:
+            formatted_entry = [record.id, record.winner, record.author.first_name, record.author.last_name]
+            for value in entry:
+                if value == 2:
                     formatted_entry.append(winner)
-                elif s == 1:
+                elif value == 1:
                     formatted_entry.append(contained_the_winner)
                 else:
                     formatted_entry.append(loser)
@@ -33,8 +33,8 @@ class GroupHistory:
         query = self.query_db()
         data = []
         for record in query:
-            ss = [record.additive, record.multiplicative, record.borda, record.copeland, record.plurality_voting,
-                  record.approval, record.least_misery, record.most_pleasure, record.average_without_misery]
-            data.append(ss)
+            entry = [record.additive, record.multiplicative, record.borda, record.copeland, record.plurality_voting,
+                     record.approval, record.least_misery, record.most_pleasure, record.average_without_misery]
+            data.append(entry)
         values = [sum(rating) for rating in zip(*data)]
         return values

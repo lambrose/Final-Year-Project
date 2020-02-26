@@ -4,13 +4,14 @@ from loop import db
 from loop.collaborative_filter import CollaborativeFilter
 from loop.main.forms import GroupForm, cinema_list, MovieSearchForm, SelectGenreForm, LikeForm, DislikeForm
 from loop.group_history import GroupHistory
-from loop.models import Movies, Preferences
+from loop.models import Movies, Preferences, GroupResults
 from flask_login import current_user, login_required
 from loop.cinema import CinemaMovies
 from loop.algorithm import Algorithms
 from loop.movie_search import MovieSearch
 from loop.movie_categories import Genres
 import unidecode
+# from loop.update_movie_db import UpdateMovieDatabase
 
 main = Blueprint('main', __name__)
 
@@ -18,6 +19,8 @@ main = Blueprint('main', __name__)
 @main.route("/watch", methods=['GET', 'POST'])
 @login_required
 def watch():
+    # update_db = UpdateMovieDatabase()
+    # update_db.insert_movies()
     form = MovieSearchForm()
     like_form = LikeForm()
     dislike_form = DislikeForm()
@@ -66,7 +69,7 @@ def watch():
 def movie_recommendation():
     movie = request.form.get("search")
     if movie:
-        search_result = Movies.query.filter(Movies.title.ilike('%'+movie+'%')).first()
+        search_result = Movies.query.filter(Movies.title.ilike('%' + movie + '%')).first()
         if search_result:
             movies = MovieSearch(search_result)
             return render_template('movie_recommendation.html', title='Movie recommendation',
@@ -113,6 +116,16 @@ def delete_vote(vote_id):
         flash(movie.movie + ' has been removed from your liked list', 'success')
     else:
         flash(movie.movie + ' has been removed from your disliked list', 'success')
+    return redirect(url_for('main.profile'))
+
+
+@main.route("/profile/<int:group_id>/delete_record", methods=['POST'])
+@login_required
+def delete_group_vote(group_id):
+    group_result = GroupResults.query.get_or_404(group_id)
+    db.session.delete(group_result)
+    db.session.commit()
+    flash(group_result.winner + ' has been removed', 'success')
     return redirect(url_for('main.profile'))
 
 
