@@ -61,6 +61,7 @@ class UpdateMovieDatabase:
                     db.session.add(entry)
                     try:
                         db.session.commit()
+                        genre_ids = {key: 0 for key in genre_ids}
                     except exc.SQLAlchemyError:
                         print(movie)
                 # reset boolean value
