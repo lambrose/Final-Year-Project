@@ -161,7 +161,7 @@ div.scrollmenu .movie_container:hover
 .profile_sections
 {
   background-color: #ffffff;
-  height: 15vw;
+  height: 17vw;
   overflow: auto;
   border-radius: 10px;
 }
@@ -169,7 +169,7 @@ div.scrollmenu .movie_container:hover
 .profile_graph_section
 {
   background-color: #ffffff;
-  height: 15vw;
+  height: 17vw;
   border-radius: 10px;
 }
 
