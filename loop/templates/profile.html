@@ -1,17 +1,175 @@
 {% extends "layout.html" %}
 {% block content %}
-    <h1>{{ current_user.first_name }} {{ current_user.last_name }}</h1>
+    <div class="container">
+        <div class="row">
+          <div class="col-lg-6 col-sm-9 mt-4">
+              <legend class="border-bottom mb-4">Liked Movies</legend>
+              <div class="profile_sections">
+                  <ul class="list-group list-group-flush">
+                      {% for like in likes %}
+                        <li class="list-group-item">
+                            <h5 class="profileHeadingSection mt-2">{{ like.movie }}</h5>
+                            <button type="button" class="btn profileHeadingBtn" data-toggle="modal" data-target="#removeLikeModal{{ loop.index }}"><i class="fas fa-bars"></i></button>
+                        </li>
 
-        <div class="col-md-4">
-          <div class="content-section">
-            <h3>Genres</h3>
-            <p class='text-muted'>What type of movie are you looking for?</p>
-              <ul class="list-group">
-                <li class="list-group-item list-group-item-light">genre 1</li>
-                <li class="list-group-item list-group-item-light">genre 2</li>
-                <li class="list-group-item list-group-item-light">genre 3</li>
-                <li class="list-group-item list-group-item-light">etc</li>
-              </ul>
+                         <!-- Modal -->
+                        <div class="modal fade" id="removeLikeModal{{ loop.index }}" tabindex="-1" role="dialog" aria-labelledby="removeLikeModalLabel" aria-hidden="true">
+                          <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h4 class="modal-title" id="removeLikeModalLabel">Movie Details</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                              </div>
+                                <div class="modal-body">
+                                    <p><b>User: </b>{{ like.author.first_name }} {{ like.author.last_name }}</p>
+                                    <p><b>Movie: </b>{{ like.movie }}</p>
+                                    <p><b>Date added: </b>{{ like.vote_date.date() }}</p>
+                              </div>
+                              <div class="modal-footer">
+                                <form action="{{ url_for('main.update_vote', vote_id=like.id) }}" method="post">
+                                  <input class="btn btn-primary" type="submit" value="Dislike">
+                                 </form>
+
+                                 <form action="{{ url_for('main.delete_vote', vote_id=like.id) }}" method="post">
+                                  <input class="btn btn-danger" type="submit" value="Remove">
+                                 </form>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      {% endfor %}
+                  </ul>
+              </div>
+          </div>
+          <div class="col-lg-6 col-sm-9 mt-4">
+              <legend class="border-bottom mb-4">Disliked Movies</legend>
+              <div class="profile_sections">
+                  <ul class="list-group list-group-flush">
+                      {% for dislike in dislikes %}
+                        <li class="list-group-item">
+                            <h5 class="profileHeadingSection mt-2">{{ dislike.movie }}</h5>
+                            <button type="button" class="btn profileHeadingBtn" data-toggle="modal" data-target="#removeDislikeModal{{ loop.index }}"><i class="fas fa-bars"></i></button>
+                        </li>
+
+                         <!-- Modal -->
+                        <div class="modal fade" id="removeDislikeModal{{ loop.index }}" tabindex="-1" role="dialog" aria-labelledby="removeDislikeModalLabel" aria-hidden="true">
+                          <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h4 class="modal-title" id="removeDislikeModalLabel">Movie Details</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                              </div>
+                                <div class="modal-body">
+                                    <p><b>User: </b>{{ dislike.author.first_name }} {{ dislike.author.last_name }}</p>
+                                    <p><b>Movie: </b>{{ dislike.movie }}</p>
+                                    <p><b>Date added: </b>{{ dislike.vote_date.date() }}</p>
+                              </div>
+                              <div class="modal-footer">
+                                <form action="{{ url_for('main.update_vote', vote_id=dislike.id) }}" method="post">
+                                  <input class="btn btn-primary" type="submit" value="Like">
+                                 </form>
+
+                                 <form action="{{ url_for('main.delete_vote', vote_id=dislike.id) }}" method="post">
+                                  <input class="btn btn-danger" type="submit" value="Remove">
+                                 </form>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      {% endfor %}
+                  </ul>
+              </div>
+          </div>
+     </div>
+      <div class="row">
+          <div class="col-lg-6 col-sm-9 mt-4">
+              <legend class="border-bottom mb-4">Group History</legend>
+              <div class="profile_sections">
+                  <ul class="list-group list-group-flush">
+                      {% for record in history %}
+                        <li class="list-group-item">
+                            <h5 class="profileHeadingSection mt-2">{{ record[1] }}</h5>
+                            <button type="button" class="btn profileHeadingBtn" data-toggle="modal" data-target="#removeHistoryModal{{ loop.index }}"><i class="fas fa-bars"></i></button>
+                        </li>
+
+                         <!-- Modal -->
+                        <div class="modal fade" id="removeHistoryModal{{ loop.index }}" tabindex="-1" role="dialog" aria-labelledby="removeHistoryModalLabel" aria-hidden="true">
+                          <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h4 class="modal-title" id="removeHistoryModalLabel">{{ record[1] }} Details</h4>
+                                  <div class="dropdown">
+                                    <button class="btn dropdown-toggle" type="button" data-toggle="dropdown"><i class="fas fa-check-circle green_icon"></i>
+                                    <span class="caret"></span></button>
+                                    <ul class="group_icon dropdown-menu">
+                                        <li><p>Returned the preferred movie</p></li>
+                                    </ul>
+                                  </div>
+                                  <div class="dropdown">
+                                    <button class="btn dropdown-toggle" type="button" data-toggle="dropdown"><i class="fas fa-exclamation-circle blue_icon"></i>
+                                    <span class="caret"></span></button>
+                                    <ul class="group_icon dropdown-menu">
+                                        <li><p>Returned multiple movies that contained the preferred movie</p></li>
+                                    </ul>
+                                  </div>
+                                  <div class="dropdown">
+                                    <button class="btn dropdown-toggle" type="button" data-toggle="dropdown"><i class="fas fa-times-circle red_icon"></i>
+                                    <span class="caret"></span></button>
+                                    <ul class="group_icon dropdown-menu">
+                                        <li><p>Did not return the the preferred movie</p></li>
+                                    </ul>
+                                  </div>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                              </div>
+                                <div class="modal-body">
+                                    <p><b>User: </b>{{ record[2] }} {{ record[3]}}</p>
+                                    <p><b>Additive Utilitarian Algorithm: </b><i class="{{ record[4] }}"></i></p>
+                                    <p><b>Multiplicative Utilitarian Algorithm: </b><i class="{{ record[5] }}"></i></p>
+                                    <p><b>Borda Count Algorithm: </b><i class="{{ record[6] }}"></i></p>
+                                    <p><b>Copeland Rule Algorithm: </b><i class="{{ record[7] }}"></i></p>
+                                    <p><b>Plurality Voting Algorithm: </b><i class="{{ record[8] }}"></i></p>
+                                    <p><b>Approval Voting Algorithm: </b><i class="{{ record[9] }}"></i></p>
+                                    <p><b>Least Misery Algorithm: </b><i class="{{ record[10] }}"></i></p>
+                                    <p><b>Most Pleasure Algorithm: </b><i class="{{ record[11] }}"></i></p>
+                                    <p><b>Average Without Misery Algorithm: </b><i class="{{ record[12] }}"></i></p>
+                                    <p><b>Date added: </b>{{ record[13].date() }}</p>
+                              </div>
+                              <div class="modal-footer">
+                                  <form action="{{ url_for('main.delete_group_vote', group_id=record[0]) }}" method="post">
+                                  <input class="btn btn-danger" type="submit" value="Remove">
+                                  </form>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      {% endfor %}
+                  </ul>
+              </div>
+          </div>
+          <div class="col-lg-6 col-sm-9 mt-4">
+              <legend class="border-bottom mb-4">Group Algorithms Performances</legend>
+              <div class="profile_graph_section ct-chart ct-golden-section"></div>
+                <script>
+                    new Chartist.Bar('.ct-chart',
+                     {
+                          labels: ['Add', 'Multi', 'Borda', 'Cope', 'Plural', 'Approv', 'L.M.', 'M.P.', 'A.W.M'],
+                          series: [{{group_values}}]
+                     },
+                     {
+                          seriesBarDistance: 30,
+                          axisX:
+                          {
+                            showGrid: false
+                          }
+                     });
+            </script>
           </div>
         </div>
+    </div>
 {% endblock content %}

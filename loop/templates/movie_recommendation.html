@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container">
+    <h1>Movie Results:</h1>
+</div>
+<div class="container">
+    {% for movie in movies %}
+     <div class="col-md-8 text-center">
+            <button type="button" class="collapsible_movies article-content">{{ movie[0] }}</button>
+            <div class="collapsible_movies_content">
+            <img src="{{ movie[2] }}" class="img-fluid img-thumbnail" width="200" height="300">
+            <p class="article-content">{{ movie[1] }}</p>
+            <p class="article-content"><b>Popularity: {{ movie[3] }}</b></p>
+            <p class="article-content"><b>Release Date: {{ movie[4]._date_repr }}</b></p>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+<script>
+ var movies = document.getElementsByClassName("collapsible_movies");
+    var index;
+
+    // loop through all the nested movies
+    for (index = 0; index < movies.length; index++) {
+        // action listener to determine which movie has been pressed
+      movies[index].addEventListener("click", function() {
+        this.classList.toggle("active");
+        // if pressed and  open then close else open and display content
+        var movie_content = this.nextElementSibling;
+        if (movie_content.style.display === "block") {
+          movie_content.style.display = "none";
+        } else {
+          movie_content.style.display = "block";
+        }
+      });
+    }
+</script>
+
+{% endblock content %}

@@ -1,5 +1,82 @@
 {% extends "layout.html" %}
 {% block content %}
-<p class="article-content">{{ input_values }}</p>
+<div class="col-md-8">
+    <div class="text-center">
+        <H1 class="article-content">Recommended Movie:</H1>
+        <h2 class="article-content">{{ top_movie[0] }}</h2>
+        <img src="{{ top_movie[1] }}" class="img-fluid img-thumbnail" width="300" height="400">
+        {% for ticket in top_movie[2] %}
+            {% for ticket, times in ticket.items() %}
+                    <select class="form-control form-control-lg">
+                        <option value="{{ticket}}">{{ticket}}</option>
+                      {% for time in times %}
+                        <option value="{{time}}">{{time}}</option>
+                      {% endfor %}
+                    </select>
+            {% endfor %}
+        {% endfor %}
 
+        <h4 class="article-content">Recommendation score: {{ top_movie[3] }}</h4>
+        <h4> For more info:
+            <a href="{{ top_movie[4] }}"><button class="btn btn-info">Eye cinema</button></a>
+        </h4>
+    </div>
+</div>
+
+<div class="col-md-4">
+    <div class="sidebar-section">
+        {% if other_movies %}
+            {% if other_movies|count > 1%}
+            <H3 class="article-content border-bottom mb-4">Other Movies:</H3>
+            {% else %}
+                <H3 class="article-content border-bottom mb-4">Other Movie:</H3>
+            {% endif %}
+
+            {% for movie in other_movies %}
+            <div class="text-center">
+                <button type="button" class="collapsible_movies">{{ movie[0] }}</button>
+                <div class="collapsible_movies_content">
+                <img src="{{ movie[1] }}" class="img-fluid img-thumbnail">
+                {% for ticket in movie[2] %}
+                    {% for ticket, times in ticket.items() %}
+                        <select class="form-control form-control-lg">
+                                <option value="{{ticket}}">{{ticket}}</option>
+                              {% for time in times %}
+                                <option value="{{time}}">{{time}}</option>
+                              {% endfor %}
+                            </select>
+                    {% endfor %}
+                {% endfor %}
+                <p class="article-content"><b>Recommendation score: {{ movie[3] }}</b></p>
+                <p> For more info:
+                    <a href="{{ movie[4] }}"><button class="btn btn-info">Eye cinema</button></a>
+                </p>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <h4> There are no other movies</h4>
+        {% endif %}
+    </div>
+
+    <script>
+    var movies = document.getElementsByClassName("collapsible_movies");
+    var index;
+
+    // loop through all the nested movies
+    for (index = 0; index < movies.length; index++) {
+        // action listener to determine which movie has been pressed
+      movies[index].addEventListener("click", function() {
+        this.classList.toggle("active");
+        // if pressed and  open then close else open and display content
+        var movie_content = this.nextElementSibling;
+        if (movie_content.style.display === "block") {
+          movie_content.style.display = "none";
+        } else {
+          movie_content.style.display = "block";
+        }
+      });
+    }
+    </script>
+</div>
 {% endblock content %}
