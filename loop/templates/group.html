@@ -1,5 +1,16 @@
 {% extends "layout.html" %}
 {% block content %}
+<div class="container">
+  <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#demo">Instructions</button>
+  <div id="demo" class="collapse">
+    1. Please specify how many people are in the group, that will be voting on their preferred movie. <br>
+    2. Then please check the movies that you would like to watch. Note, each member of the group can only select a movie.
+       E.g. If there are 3 people in the group, then only a maximum of 3 movies can be selected. Then confirm your
+       selection by clicking "confirm".<br>
+    3. In the table provided, each user should assign a preference score from 1 to 10 across all movies. 10 being the
+       most preferred movie and 1 being the least preferred movie. Then confirm your inputs by clicking "submit". <br><br>
+  </div>
+</div>
 <div class="col-md-8">
     <form method="POST" action="">
         {{ people_form.hidden_tag() }}
