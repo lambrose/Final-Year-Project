@@ -161,15 +161,15 @@ div.scrollmenu .movie_container:hover
 .profile_sections
 {
   background-color: #ffffff;
-  height: 17vw;
-  overflow: auto;
+  height: 18vw;
+  overflow: scroll;
   border-radius: 10px;
 }
 
 .profile_graph_section
 {
   background-color: #ffffff;
-  height: 17vw;
+  height: 18vw;
   border-radius: 10px;
 }
 
@@ -212,4 +212,33 @@ color: #ff3300;
 .group_icon
 {
   background-color: #F0F0F0;
+}
+
+div.messages {
+  background-color: #ffffff;
+  height: 15vw;
+  overflow: auto;
+  border-radius: 0.5vw;
+  padding: 10px;
+}
+
+.left_group_landing
+{
+    background-color: #FFFAFA;
+    border-radius: 1.5vw;
+}
+
+.right_group_landing
+{
+    background-color: #F5F5F5;
+    border-radius: 1.5vw;
+}
+
+.chat_recommendations_scroll
+{
+  background-color: #ffffff;
+  height: 40vw;
+  overflow: auto;
+  border-radius: 0.5vw;
+  padding: 10px;
 }
