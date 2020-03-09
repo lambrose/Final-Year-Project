@@ -12,6 +12,7 @@ class Genres:
     def movies_genres(self, genre):
         # get the sql view name of the drop down selected value
         # running a select query
+        # the values of the keys in the dictionary correspond to a sql view
         movies = {'Action': 'action_movies', 'Adventure': 'adventure_movies', 'Animation': 'animation_movies',
                   'Comedy': 'comedy_movies', 'Crime': 'crime_movies', 'Documentary': 'documentary_movies',
                   'Drama': 'drama_movies', 'Family': 'family_movies', 'Fantasy': 'fantasy_movies',
