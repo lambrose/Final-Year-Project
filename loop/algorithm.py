@@ -17,23 +17,40 @@ class Algorithms:
         self.data = data
 
     def process_data(self):
-        ratings_data = []
-        ratings = self.data.index("User 1:")
-        # getting all the movie names
-        movies = [movie for movie in self.data[1: ratings]]
-        # iterating through the nested list
-        for value in self.data[ratings:]:
-            try:
-                # Checking each value in the list to see if its an int or string
-                if 0 < int(value) < 11:
-                    # If it is an int, then it is added to a list
-                    ratings_data.append(int(value))
-            # Else if it is not an int the error is caught as a string cannot be casted as a float
-            except ValueError:
-                pass
-        # Separate individual user ratings
-        ratings = [ratings_data[index:index + len(movies)] for index in range(0, len(ratings_data), len(movies))]
-        return movies, ratings
+        if "User 1:" in self.data:
+            ratings_data = []
+            ratings = self.data.index("User 1:")
+            # getting all the movie names
+            movies = [movie for movie in self.data[1: ratings]]
+            # iterating the list from the point of user 1 first rating
+            for value in self.data[ratings:]:
+                try:
+                    # Checking each value in the list to see if its an int or string
+                    if 0 < int(value) < 11:
+                        # If it is an int, then it is added to a list
+                        ratings_data.append(int(value))
+                # Else if it is not an int the error is caught as a string cannot be casted as a int
+                except ValueError:
+                    pass
+            # Separate individual user ratings
+            ratings = [ratings_data[index:index + len(movies)] for index in range(0, len(ratings_data), len(movies))]
+            return movies, ratings
+        else:
+            movies = []
+            ratings = []
+            for y in self.data:
+                try:
+                    # Checking each value in the list to see if its an int or string
+                    if 0 < int(y) < 11:
+                        # If it is an int, then it is added to a list
+                        ratings.append(int(y))
+                # Else if it is not an int the error is caught as a string cannot be casted as a int
+                except ValueError:
+                    if y not in movies:
+                        movies.append(y)
+            # Separate individual user ratings
+            ratings = [ratings[index:index + len(movies)] for index in range(0, len(ratings), len(movies))]
+            return movies, ratings
 
     def additive(self):
         data = self.process_data()
@@ -86,6 +103,7 @@ class Algorithms:
         algorithms = [self.additive(), self.multiplicative(), self.borda(), self.copeland(), self.plurality_voting(),
                       self.approval(), self.least_misery(), self.most_pleasure(), self.average_without_misery()]
 
+        # adding all the recommended movies from the algorithms to a list for counting occurrences
         for algorithm in algorithms:
             if type(algorithm) == list:
                 for movie in algorithm:
@@ -100,18 +118,23 @@ class Algorithms:
         # Sort the movies based on their score
         sort_ranked_movies = sorted(rank_movies, key=lambda k: k['score'], reverse=True)
 
+        # specify the most recommended movie as the winner
         results = []
         winner = sort_ranked_movies[0]['movie']
         for algorithm in algorithms:
+            # if the algorithm returned multiple movies containing the winner
             if type(algorithm) == list:
                 if winner in algorithm:
                     results.append(1)
             else:
+                # if the algorithm returned the winner
                 if winner == algorithm:
                     results.append(2)
+                # if the algorithm did not returned the winner
                 else:
                     results.append(0)
 
+        # add this entry to the database
         group = GroupResults(winner=sort_ranked_movies[0]['movie'], additive=results[0], multiplicative=results[1],
                              borda=results[2], copeland=results[3], plurality_voting=results[4], approval=results[5],
                              least_misery=results[6], most_pleasure=results[7], average_without_misery=results[8],
