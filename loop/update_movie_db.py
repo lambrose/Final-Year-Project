@@ -61,6 +61,7 @@ class UpdateMovieDatabase:
                     db.session.add(entry)
                     try:
                         db.session.commit()
+                        # reset the genre_id dict to zero after every iteration
                         genre_ids = {key: 0 for key in genre_ids}
                     except exc.SQLAlchemyError:
                         print(movie)
