@@ -136,15 +136,13 @@
             <h1 class="section_heading">{{category}}</h1>
             <div class="scrollmenu">
               {% for movie_container in movies %}
-                  {% for movie in movie_container[0] %}
+                  {% for movie in movie_container %}
                     <div class="movie_container">
                         <a id="{{ movie.title }}1" href="#{{ movie.title }}1">
                             <input type="image" src="{{movie.image}}" data-description="<h1>{{ movie.title }}</h1>
                                                  <h6><b>Description:</b> {{ movie.overview }}</h6>
                                                  <h6><b>Popularity:</b> {{ movie.popularity }}</h6>
-                                                 <h6><b>Release Date:</b> {{ movie.release_date.date() }}</h6>
-                                                 <br>
-                                                 <h6><b>{{ movie_container[1] }}</b></h6>"
+                                                 <h6><b>Release Date:</b> {{ movie.release_date.date() }}</h6>"
                                    value="{{already_voted.get(movie.title)}}"
                                onclick="movie_content(this)" class="image-button img-fluid img-thumbnail"/>
                         </a>

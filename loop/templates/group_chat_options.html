@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-6 col-sm-9 mt-4 px-md-5 left_group_landing">
+            <form action="/group_chat">
+                <legend class="border-bottom mt-3"><b>Create a chat room</b></legend>
+                <div class="form-group">
+                    <label for="amount_of_people">Specify the amount of people entering the group:</label>
+                    <input type="number" class="form-control" id="amount_of_people" placeholder="Enter..." name="num_people" required>
+                </div>
+                <button type="submit" class="btn btn-success mb-2">Create</button>
+            </form>
+        </div>
+        <div class="col-lg-6 col-sm-9 mt-4 px-md-5 right_group_landing">
+            <form action="/group_chat">
+                <legend class="border-bottom mt-3"><b>Join a chat room</b></legend>
+                <div class="form-group">
+                    <label for="room_number">Specify the room number to enter:</label>
+                    <input type="number" class="form-control" id="room_number" placeholder="Enter..." name="room" required>
+                </div>
+              <button type="submit" class="btn btn-primary mb-2">Join</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock content %}

@@ -1,0 +1,333 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container">
+    <legend class="border-bottom mt-3">
+    {% if num_people == -1 %}
+        <h1>Chat room {{ room }}</h1>
+    {% else %}
+        <h1>Chat room {{ room }}</h1> <p>voters: {{ num_people }} users</p>
+    {% endif %}
+    </legend>
+<div class="row">
+
+<div class="col-lg-4 col-sm-9 mt-2">
+    <div id="messages" class="messages"></div>
+
+    <form id="message_input_form">
+      <div class="input-group input-group-lg">
+        <input type="text" class="form-control input-lg" id="message_input" placeholder="Enter message...">
+      <span class="input-group-btn">
+      <button type="submit" class="btn btn-primary btn-lg">Send</button>
+          </span>
+    </div>
+    </form>
+</div>
+
+<div class="col-lg-8 col-sm-9 mt-2">
+
+    <div id="display_recommendations_button">
+        <form id="request_recommendations">
+          <button type="submit" class="btn btn-primary btn-lg">get recommendation</button>
+        </form>
+    </div>
+
+    <div id="display_cinema_form">
+        {%if render_form == 1%}
+            <div id="cinema_movie_form" class="sidebar-section">
+                <h3 class="border-bottom">Cinema Movies</h3>
+                <p id="no_movies"></p>
+                 <form id="cinema_movie_check" method="POST" action="">
+                    {{ cinema_form.hidden_tag() }}
+                    <fieldset class="form-group">
+                        {% if cinema_form.options.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in cinema_form.options.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        {% for option in cinema_form.options %}
+                            <div class="form-check">
+                                {{ option(class="checkbox form-check-input") }}
+                                {{ option.label(class="form-check-label") }}
+                            </div>
+                        {% endfor %}
+                    </fieldset>
+                    <div class="form-group">
+                        {{ cinema_form.send(class="btn btn-outline-info") }}
+                    </div>
+                </form>
+            </div>
+        {% endif %}
+
+            <form class="form-group" id="individual_ratings_form" action="/submit_rated_movies" method="post">
+                <input type="hidden" class="form-control input-lg" name="room_rec" value="{{ room }}">
+            </form>
+            <button class="btn btn-outline-info" type="submit" id="submit_individual_rating" form="individual_ratings_form">Submit</button>
+    </div>
+
+    <div id="display_recommendations" class="text-center">
+        <div id="chat_recommendations" class="chat_recommendations_scroll"></div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+<script type="text/javascript">
+    const socket = io.connect("http://127.0.0.1:5000");
+    document.getElementById("display_cinema_form").style.display = "none";
+    document.getElementById("submit_individual_rating").style.display = "none";
+    document.getElementById("display_recommendations_button").style.display = "none";
+    document.getElementById("display_recommendations").style.display = "none";
+
+    socket.on('connect', function ()
+    {
+        socket.emit('join_room',
+        {
+            username: "{{ username }}",
+            room: "{{ room }}"
+        });
+
+        let message_input = document.getElementById('message_input');
+
+        document.getElementById('message_input_form').onsubmit = function (e)
+        {
+            e.preventDefault();
+            let message = message_input.value.trim();
+            if (message.length)
+            {
+                socket.emit('send_message',
+                {
+                    username: "{{ username }}",
+                    room: "{{ room }}",
+                    message: message
+                })
+            }
+            message_input.value = '';
+            message_input.focus();
+        }
+    });
+
+    socket.on('join_room_announcement', function (data)
+    {
+        console.log(data.users_in);
+        cinema_form_checker(data.users_in);
+        if (data.username !== "{{ username }}")
+        {
+            document.getElementById('messages').innerHTML += data.username .bold()+ " has joined the room <br>";
+        }
+    });
+
+    socket.on('receive_message', function (data)
+    {
+        document.getElementById('messages').innerHTML += data.username.bold() + ": " + data.message + "<br>";
+    });
+
+    if({{render_form}} == 1)
+    {
+        //Determine all checkboxes in a form
+        var checks = document.querySelectorAll(".checkbox");
+        //If there are no movies in the cinema
+        if(checks.length == 0)
+        {
+            document.getElementById("no_movies").innerHTML = "There are no movies in the cinema at the moment.";
+        }
+
+        //Determining the movie selected by checking the position of the movies selected
+        for (var index = 0; index < checks.length; index++)
+          checks[index].onclick = checks_selected;
+        function checks_selected (event)
+        {
+        // The movies checked
+          var actual_checked = document.querySelectorAll(".checkbox:checked");
+        // The max number of boxes selected are the amount of people in the group
+          if (actual_checked.length >= 2)
+            return false;
+        }
+        document.getElementById('cinema_movie_check').onsubmit = function(e)
+        {
+            e.preventDefault();
+                let message = document.querySelectorAll(".checkbox:checked")[0].value;
+                if (message.length)
+                {
+                    document.getElementById("cinema_movie_form").style.display = "none";
+                    socket.emit('send_movies_to_be_rated',
+                    {
+                        username: "{{ username }}",
+                        room: "{{ room }}",
+                        message: message
+                    })
+                }
+        };
+
+    }
+
+    socket.on('receive_movies_to_be_rated', function (data) {
+        if(data.movies.length == data.people)
+        {
+            document.getElementById("submit_individual_rating").style.display = "block";
+            movies_selected(data.movies)
+        }
+    });
+
+    function movies_selected(movies_checked)
+    {
+        var counter = 0;
+        var user_id = 0;
+
+        //Call form for inputs to be created
+        var form = document.getElementById("individual_ratings_form");
+        // get the movies checked
+        if(movies_checked.length > 1)
+        {
+            var size = movies_checked.length
+
+            for(var index=0; index < size*2; index++)
+            {
+                var input = document.createElement('input');
+                 if(index%size == 0)
+                 {
+                    var row_div = document.createElement("div");
+                    row_div.className = 'row'
+                 }
+                //The first input box in each row, should be of type text to represent a user
+                if(index < size)
+                {
+                     // populating the input row with movies
+                     input.id = 'input_rating_' + index;
+                     input.name = 'input_rating_' + index;
+                     input.className = 'form-control'
+                     input.type = 'text';
+                     input.readOnly = true;
+                     // User ID is developed by a counter
+                     input.value = movies_checked[index];
+                }
+                else
+                {
+                    // the input for ratings
+                    input.type = 'number';
+                    input.id = 'input_rating_' + index;
+                    input.name = 'input_rating_' + index;
+                    input.className = 'form-control'
+                    input.min = 1;
+                    input.max = 10;
+                    input.required = true;
+                 }
+
+
+                // adding all inputs for each user in a div
+                if(counter<size)
+                {
+                    var div = document.createElement("div");
+                    div.className = 'col-md'
+                    // add the input to the div
+                    div.appendChild(input);
+                    row_div.appendChild(div);
+                    // add the div to the form
+                    form.appendChild(row_div);
+                    counter++;
+                 }
+                else
+                {
+                     // Add current input value
+                    var div = document.createElement("div");
+                    div.className = 'col-md'
+                    div.appendChild(input);
+                    row_div.appendChild(div);
+                    form.appendChild(row_div);
+                     // reset counter to 1 and not 0
+                     counter = 1
+                }
+            }
+        }
+    };
+
+    function cinema_form_checker(current_users)
+    {
+        if({{ num_people }} == current_users)
+        {
+            document.getElementById("display_cinema_form").style.display = "block";
+        }
+     }
+
+    document.getElementById('request_recommendations').onsubmit = function (e)
+    {
+        e.preventDefault();
+        socket.emit('send_movie_recommendations',
+            {
+                username: "{{ username }}",
+                room: "{{ room }}"
+            })
+    }
+
+    if({{ num_people }} == -1)
+    {
+        document.getElementById("display_recommendations_button").style.display = "block";
+    }
+
+     socket.on('receive_movie_recommendations', function (data)
+    {
+        document.getElementById("display_recommendations_button").style.display = "none";
+        document.getElementById("display_recommendations").style.display = "block";
+        console.log(data);
+        var index;
+        var row_divs = document.createElement("div");
+        for(index=0; index<data.length; index++)
+        {
+            var h1 = document.createElement("H1");
+            var position = index + 1;
+            var text_score = document.createTextNode("Recommendation: " + position);
+            h1.appendChild(text_score);
+
+            var h2 = document.createElement("H2");
+            var text_0 = document.createTextNode(data[index][0]);
+            h2.appendChild(text_0);
+
+            var img = document.createElement("img");
+            img.src = data[index][1];
+
+            var h4 = document.createElement("H4");
+            var text_2 = document.createTextNode("Recommendation score: " + data[index][2]);
+            h4.appendChild(text_2);
+
+            var create_link = document.createElement('a');
+            var create_link_text = document.createTextNode("Eye cinema");
+            create_link.setAttribute('href', data[index][3]);
+            create_link.appendChild(create_link_text);
+
+            var br_1 = document.createElement("br");
+            var br_2 = document.createElement("br");
+            var br_3 = document.createElement("br");
+            var br_4 = document.createElement("br");
+
+            row_divs.appendChild(h1);
+            row_divs.appendChild(h2);
+            row_divs.appendChild(img);
+            row_divs.appendChild(h4);
+            row_divs.appendChild(create_link);
+            row_divs.appendChild(br_1);
+            row_divs.appendChild(br_2);
+            row_divs.appendChild(br_3);
+            row_divs.appendChild(br_4);
+        }
+        document.getElementById("chat_recommendations").appendChild(row_divs);
+
+    });
+
+    window.onbeforeunload = function ()
+    {
+        socket.emit('leave_room',
+        {
+            username: "{{ username }}",
+            room: "{{ room }}"
+        })
+    };
+
+    socket.on('leave_room_announcement', function (data)
+    {
+        document.getElementById('messages').innerHTML += data.username.bold() + " has left the room <br>";
+    });
+
+</script>
+</div>
+</div>
+{% endblock content %}
