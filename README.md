@@ -1,47 +1,41 @@
-Project Title
-One Paragraph of project description goes here.
+Loop (Final Year Project)
+I am creating a python flask web application, that will require users to create an account in order to get recommendations for group or individual usage.
+The group recommendation will work by each member of the group assigning ratings to movies selected.
+A series of algorithms will be executed  to determine if there is an intersection or correlation between algorithms results.
+The individual recommendation will be used in the search method.
+Based on what movie is searched, the application will use machine learning to predict possible movies of interest based on the description of the movie and the genre.
+The application will also group movies together based on movie genres.
+Once these main tasks specified above are complete, I will aim to implement an interactive news feed and a user search history.
+The search history will be used to suggest  movies automatically for groups and individuals.
 
 Getting Started
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+(Locally)
+•	The socket connection string will need to be changed from my heroku server url to a localhost string
+
+(Remotely)
+•	Configure your own heroku app and replace my URL.
 
 Prerequisites
-What things you need to install the software and how to install them
+All python packages in the requirements.txt file will have to be downloaded in order for this application to work.
 
-Give examples
-Installing
-A step by step series of examples that tell you how to get a development env running
-
-Say what the step will be
-
-Give the example
-And repeat
-
-until finished
-End with an example of getting some data out of the system or using it for a little demo
+Finished application:
+website URL:
 
 Running the tests
-Explain how to run the automated tests for this system
+•	Extensive unittest were carried out
+•	User evaluation and testing
+•	Machine learning experiments were undergone and compared with existing algorithms
 
-Break down into end to end tests
-Explain what these tests test and why
-
-Give an example
-And coding style tests
-Explain what these tests test and why
-
-Give an example
 Deployment
-Add additional notes about how to deploy this on a live system
+This project was deployed using heroku
 
 Built With
-Dropwizard - The web framework used
-Maven - Dependency Management
-ROME - Used to generate RSS Feeds
-Contributing
-Please read CONTRIBUTING.md for details on our code of conduct, and the process for submitting pull requests to us.
-
-Versioning
-We use SemVer for versioning. For the versions available, see the tags on this repository.
+•	Python - A general purpose and high level programming language. You can use Python for developing desktop GUI applications, websites and web applications. Also, Python, as a high level programming language, allows you to focus on core functionality of the application by taking care of common programming tasks
+•	Python Flask -  A lightweight web frame of Python. It provides the user with libraries, modules and tools to help build Web-Applications.
+•	JavaScript - Used to create responsive, interactive elements for web pages, enhancing the user experience.
+•	Bootstrap -  A framework to help you design websites faster and easier.
+•	SQL - Used to communicate with a database.
+•	PhpMyAdmin - Used for administering MySQL with a web browser. Typical operations such as the management of databases, tables, indexes, permissions, and so on are executed with the user interface. Administrators can also be used to directly execute any SQL statement.
 
 Authors
 Louis Ambrose
