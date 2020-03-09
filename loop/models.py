@@ -8,6 +8,8 @@ def load_user(user_id):
     return Users.query.get(int(user_id))
 
 
+# UserMixin is used to assign pre built functionality to a logged in user
+# preference and group_result are foreign keys to Preferences and GroupResults tables
 class Users(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(20), unique=False, nullable=False)
