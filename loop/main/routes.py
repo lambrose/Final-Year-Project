@@ -21,18 +21,24 @@ main = Blueprint('main', __name__)
 def watch():
     # update_db = UpdateMovieDatabase()
     # update_db.insert_movies()
+    # initialise forms
     form = MovieSearchForm()
     like_form = LikeForm()
     dislike_form = DislikeForm()
+    # check if the form has been submitted
     if like_form.is_submitted() and like_form.like_movie.data:
+        # Query the database to get the selected movie
         preference = Preferences.query.filter_by(movie=like_form.like_movie.data, user_id=current_user.id).first()
+        # if the movie is not found in the db, then add it
         if not preference:
             liked_movie = Preferences(movie=like_form.like_movie.data, author=current_user, like=1, dislike=0)
             db.session.add(liked_movie)
             db.session.commit()
             flash('You liked ' + like_form.like_movie.data, 'success')
+        # if the movie is found and has the same preference, then remove it
         elif preference.like == 1:
             delete_vote(preference.id)
+        # else change the preference type
         else:
             update_vote(preference.id)
 
@@ -48,9 +54,11 @@ def watch():
         else:
             update_vote(preference.id)
 
+    # get all the voted on movie for the current user
     already_voted = Preferences.query.filter_by(user_id=current_user.id)
     movie_choices = {movie.movie: (movie.like, movie.dislike) for movie in already_voted}
 
+    # initialise the collaborative filter
     collaborative_filter = CollaborativeFilter()
     genre_form = SelectGenreForm()
     genres = Genres()
@@ -67,13 +75,17 @@ def watch():
 @main.route("/movie_recommendation", methods=['GET', 'POST'])
 @login_required
 def movie_recommendation():
+    # when the form is submitted, this method gets the value of the form request
     movie = request.form.get("search")
     if movie:
+        # search for the movie or a bit of of the movie in the db
         search_result = Movies.query.filter(Movies.title.ilike('%' + movie + '%')).first()
         if search_result:
+            # get the recommendation from movies passed in
             movies = MovieSearch(search_result)
             return render_template('movie_recommendation.html', title='Movie recommendation',
                                    movies=movies.get_recommendation())
+        # if the movie passed in is not in the db
         else:
             flash('Search Unsuccessful. Please check spelling again.', 'danger')
     return redirect(url_for('main.watch'))
@@ -82,10 +94,13 @@ def movie_recommendation():
 @main.route("/profile", methods=['GET', 'POST'])
 @login_required
 def profile():
+    # get voted on movies
     likes = Preferences.query.filter_by(like=1, user_id=current_user.id)
     dislikes = Preferences.query.filter_by(dislike=1, user_id=current_user.id)
+    # declare the group history data
     group_history = GroupHistory()
     history = group_history.get_history()
+    # group history list of data for the graph
     ranking = group_history.get_rankings()
     return render_template('profile.html', likes=likes, dislikes=dislikes, history=history, group_values=ranking)
 
@@ -93,6 +108,7 @@ def profile():
 @main.route("/profile/<int:vote_id>/update", methods=['GET', 'POST'])
 @login_required
 def update_vote(vote_id):
+    # swap the values from a like to dislike or vice versa for movies already rated
     movie = Preferences.query.get_or_404(vote_id)
     if movie.like == 1:
         movie.like = 0
@@ -109,6 +125,7 @@ def update_vote(vote_id):
 @main.route("/profile/<int:vote_id>/delete", methods=['POST'])
 @login_required
 def delete_vote(vote_id):
+    # remove the previous voted preference for a particular movie
     movie = Preferences.query.get_or_404(vote_id)
     db.session.delete(movie)
     db.session.commit()
@@ -122,6 +139,7 @@ def delete_vote(vote_id):
 @main.route("/profile/<int:group_id>/delete_record", methods=['POST'])
 @login_required
 def delete_group_vote(group_id):
+    # remove the previous group history record
     group_result = GroupResults.query.get_or_404(group_id)
     db.session.delete(group_result)
     db.session.commit()
@@ -129,9 +147,17 @@ def delete_group_vote(group_id):
     return redirect(url_for('main.profile'))
 
 
+@main.route("/group_landing", methods=['GET', 'POST'])
+@login_required
+def group_landing():
+    # render a landing page, for a user to specify the group options
+    return render_template('group_landing.html', title='Group Landing')
+
+
 @main.route("/group", methods=['GET', 'POST'])
 @login_required
 def group():
+    # get the cinema form check list with all the current movie sin the cinema
     cinema_movies = CinemaMovies()
     people_form = GroupForm()
     cinema_form = cinema_list(cinema_movies.get_movies())
