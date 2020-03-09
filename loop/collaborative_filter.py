@@ -72,16 +72,20 @@ class CollaborativeFilter:
 
     def get_similar_user_data(self, user_profiles):
         if user_profiles:
+            # sort the user profiles in descending order
             user_profiles.sort(key=lambda x: x[1], reverse=True)
             best_score = user_profiles[0][1]
             best_users = []
             for user, score, unseen_movies in user_profiles:
+                # if the best user profile score is very low, then we only want the top 80% for higher accuracy
                 if best_score <= 5:
                     if score > best_score * 0.8:
                         best_users.append(unseen_movies)
+                # if the best user profile score is average, then we only want the top 50% for higher accuracy
                 elif 5 < best_score <= 30:
                     if score > best_score * 0.5:
                         best_users.append(unseen_movies)
+                # if the best user profile score is high, then we only want the top 20% for higher accuracy
                 else:
                     if score > best_score * 0.2:
                         best_users.append(unseen_movies)
@@ -97,15 +101,17 @@ class CollaborativeFilter:
             for user in data:
                 for key, value in user.items():
                     dd[key].append(value)
-        result = {}
+        result = []
         for key, value in dd.items():
             # get the majority voting
             if len(set(value)) > 1:
                 counter = Counter(value)
-                result[key] = counter.most_common(1)[0][0]
+                if counter.most_common(1)[0][0] == 'like':
+                    result.append(key)
             # get the only vote
             else:
-                result[key] = value[0]
+                if value[0] == 'like':
+                    result.append(key)
         return result
 
     def get_recommendation(self):
@@ -114,10 +120,8 @@ class CollaborativeFilter:
         similar_users_data = self.get_similar_user_data(similar_users)
         movies = self.get_avg_vote(similar_users_data)
         if movies:
-            msg_1 = "Our system has determined that you will "
-            msg_2 = " this movie."
-            # Query the db, to get the entry and attach the like or dislike voting recommendation
-            movies = [(list(Movies.query.filter_by(title=movie)), msg_1 + vote + msg_2) for movie, vote in movies.items()]
+            # Query the db, to get the entry and it's details
+            movies = [list(Movies.query.filter_by(title=movie)) for movie in movies]
             return {'Recommended': movies}
         else:
             return None
