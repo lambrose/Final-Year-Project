@@ -2,7 +2,8 @@ import re
 from flask import render_template, url_for, flash, redirect, request, Blueprint
 from loop import db
 from loop.collaborative_filter import CollaborativeFilter
-from loop.main.forms import GroupForm, cinema_list, MovieSearchForm, SelectGenreForm, LikeForm, DislikeForm
+from loop.main.forms import GroupForm, cinema_list, MovieSearchForm, SelectGenreForm
+from loop.main.forms import LikeForm, DislikeForm, DeleteAllForm
 from loop.group_history import GroupHistory
 from loop.models import Movies, Preferences, GroupResults
 from flask_login import current_user, login_required
@@ -94,6 +95,25 @@ def movie_recommendation():
 @main.route("/profile", methods=['GET', 'POST'])
 @login_required
 def profile():
+    # deleting all values in a particular section
+    delete_all_form = DeleteAllForm()
+    if delete_all_form.is_submitted():
+        # delete all liked movies
+        if delete_all_form.delete_records.raw_data[1] == "like":
+            likes = Preferences.query.filter_by(like=1, user_id=current_user.id)
+            for like in likes:
+                delete_vote(like.id)
+        elif delete_all_form.delete_records.raw_data[1] == "dislike":
+            # delete all disliked movies
+            dislikes = Preferences.query.filter_by(dislike=1, user_id=current_user.id)
+            for dislike in dislikes:
+                delete_vote(dislike.id)
+        else:
+            # delete all group recommendations
+            records = GroupResults.query.filter_by(user_id=current_user.id)
+            for record in records:
+                delete_group_vote(record.id)
+
     # get voted on movies
     likes = Preferences.query.filter_by(like=1, user_id=current_user.id)
     dislikes = Preferences.query.filter_by(dislike=1, user_id=current_user.id)
@@ -102,7 +122,8 @@ def profile():
     history = group_history.get_history()
     # group history list of data for the graph
     ranking = group_history.get_rankings()
-    return render_template('profile.html', likes=likes, dislikes=dislikes, history=history, group_values=ranking)
+    return render_template('profile.html', likes=likes, dislikes=dislikes, history=history, group_values=ranking,
+                           delete_all_form=delete_all_form)
 
 
 @main.route("/profile/<int:vote_id>/update", methods=['GET', 'POST'])

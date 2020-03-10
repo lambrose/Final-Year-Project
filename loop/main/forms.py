@@ -62,3 +62,8 @@ class LikeForm(FlaskForm):
 class DislikeForm(FlaskForm):
     dislike_movie = HiddenField('Dislike:')
     submit = SubmitField('Dislike')
+
+
+class DeleteAllForm(FlaskForm):
+    delete_records = HiddenField('Remove All:')
+    submit = SubmitField('Delete All')

@@ -3,7 +3,32 @@
     <div class="container">
         <div class="row">
           <div class="col-lg-6 col-sm-9 mt-4">
-              <legend class="border-bottom mb-4">Liked Movies</legend>
+              <div class="row">
+                <div class="col-9">
+                      <legend class="border-bottom mb-4">Liked Movies</legend>
+                </div>
+                  <div class="col">
+                      <button type="button" class="btn profileHeadingBtn" data-toggle="collapse" data-target="#demol"><i class="fa fa-trash"></i></button>
+                        <div id="demol" class="collapse">
+                             <form class="profileHeadingBtn" method='POST' action=''>
+                               {{ delete_all_form.hidden_tag() }}
+                                  <fieldset class='form-group'>
+                                  {% if delete_all_form.delete_records.errors %}
+                                      {{ delete_all_form.delete_records(class='form-control form-control-lg is-invalid') }}
+                                      <div class='invalid-feedback'>
+                                        {% for error in delete_all_form.delete_records.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                      </div>
+                                   {% else %}
+                                        {{ delete_all_form.delete_records(value="like") }}
+                                   {% endif %}
+                                   </fieldset>
+                               {{ delete_all_form.submit(class='btn btn-outline-info') }}
+                            </form>
+                         </div>
+                  </div>
+              </div>
               <div class="profile_sections">
                   <ul class="list-group list-group-flush">
                       {% for like in likes %}
@@ -44,7 +69,33 @@
               </div>
           </div>
           <div class="col-lg-6 col-sm-9 mt-4">
-              <legend class="border-bottom mb-4">Disliked Movies</legend>
+              <div class="row">
+                <div class="col-9">
+                      <legend class="border-bottom mb-4">Disliked Movies</legend>
+                </div>
+                  <div class="col">
+                      <button type="button" class="btn profileHeadingBtn" data-toggle="collapse" data-target="#demod"><i class="fa fa-trash"></i></button>
+                        <div id="demod" class="collapse">
+                             <form class="profileHeadingBtn" method='POST' action=''>
+                               {{ delete_all_form.hidden_tag() }}
+                                  <fieldset class='form-group'>
+                                  {% if delete_all_form.delete_records.errors %}
+                                      {{ delete_all_form.delete_records(class='form-control form-control-lg is-invalid') }}
+                                      <div class='invalid-feedback'>
+                                        {% for error in delete_all_form.delete_records.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                      </div>
+                                   {% else %}
+                                        {{ delete_all_form.delete_records(value="dislike") }}
+                                   {% endif %}
+                                   </fieldset>
+                               {{ delete_all_form.submit(class='btn btn-outline-info') }}
+                            </form>
+                         </div>
+                  </div>
+              </div>
+
               <div class="profile_sections">
                   <ul class="list-group list-group-flush">
                       {% for dislike in dislikes %}
@@ -87,7 +138,33 @@
      </div>
       <div class="row">
           <div class="col-lg-6 col-sm-9 mt-4">
-              <legend class="border-bottom mb-4">Group History</legend>
+              <div class="row">
+                <div class="col-9">
+                      <legend class="border-bottom mb-4">Group History</legend>
+                </div>
+                  <div class="col">
+                      <button type="button" class="btn profileHeadingBtn" data-toggle="collapse" data-target="#demog"><i class="fa fa-trash"></i></button>
+                        <div id="demog" class="collapse">
+                             <form class="profileHeadingBtn" method='POST' action=''>
+                               {{ delete_all_form.hidden_tag() }}
+                                  <fieldset class='form-group'>
+                                  {% if delete_all_form.delete_records.errors %}
+                                      {{ delete_all_form.delete_records(class='form-control form-control-lg is-invalid') }}
+                                      <div class='invalid-feedback'>
+                                        {% for error in delete_all_form.delete_records.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                      </div>
+                                   {% else %}
+                                        {{ delete_all_form.delete_records(value="history") }}
+                                   {% endif %}
+                                   </fieldset>
+                               {{ delete_all_form.submit(class='btn btn-outline-info') }}
+                            </form>
+                         </div>
+                  </div>
+              </div>
+
               <div class="profile_sections">
                   <ul class="list-group list-group-flush">
                       {% for record in history %}
