@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, IntegerField, SelectMultipleField, widgets
 from wtforms import SelectField, HiddenField
 from wtforms.widgets import html5
-from wtforms.validators import DataRequired, Length
+from wtforms.validators import DataRequired, Length, Email
 
 
 # Group feature form
@@ -67,3 +67,11 @@ class DislikeForm(FlaskForm):
 class DeleteAllForm(FlaskForm):
     delete_records = HiddenField('Remove All:')
     submit = SubmitField('Delete All')
+
+
+# creating a contact for for my contact page
+class ContactForm(FlaskForm):
+    email = StringField('E-mail', validators=[DataRequired(), Email()])
+    subject = StringField('Subject', validators=[DataRequired(), Length(min=2, max=20)])
+    message = StringField('Message', validators=[DataRequired()])
+    submit = SubmitField('Send')

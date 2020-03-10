@@ -26,7 +26,8 @@
             <a class="navbar-brand mb-0 h1" href="{{ url_for('main.watch') }}">
             <img src="{{ url_for('static', filename = 'images/logo.jpg') }}" alt="logo" width="80" height="40"></a>
             {% else %}
-                <a class="navbar-brand mb-0 h1" href="{{ url_for('users.login') }}"><div class="logo">Loop</div></a>
+            <a class="navbar-brand mb-0 h1" href="{{ url_for('users.login') }}">
+            <img src="{{ url_for('static', filename = 'images/logo.jpg') }}" alt="logo" width="80" height="40"></a>
               {% endif %}
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -37,6 +38,7 @@
                 <a class="nav-item nav-link" href="{{ url_for('main.profile') }}">Profile</a>
                 <a class="nav-item nav-link" href="{{ url_for('main.watch') }}">Watch</a>
                 <a class="nav-item nav-link" href="{{ url_for('main.group_landing') }}">Group Recommendation</a>
+                <a class="nav-item nav-link" href="{{ url_for('main.contact') }}">Contact</a>
                 {% endif %}
             </div>
             <!-- Navbar Right Side -->
@@ -49,6 +51,7 @@
                   </ul>
                 </li>
               {% else %}
+                <a class="nav-item nav-link" href="{{ url_for('main.contact') }}">Contact</a>
                 <a class="nav-item nav-link" href="{{ url_for('users.login') }}">Login</a>
                 <a class="nav-item nav-link" href="{{ url_for('users.register') }}">Register</a>
               {% endif %}

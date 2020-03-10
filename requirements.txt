@@ -1,5 +1,6 @@
 bcrypt==3.1.7
 beautifulsoup4==4.8.2
+blinker==1.4
 bs4==0.0.1
 certifi==2019.11.28
 cffi==1.14.0
@@ -10,8 +11,10 @@ eventlet==0.25.1
 Flask==1.1.1
 Flask-Bcrypt==0.7.1
 Flask-Login==0.5.0
+Flask-Mail==0.9.1
 Flask-SocketIO==4.2.1
 Flask-SQLAlchemy==2.4.1
+flask-talisman==0.7.0
 Flask-WTF==0.14.3
 greenlet==0.4.15
 gunicorn==20.0.4

@@ -2,7 +2,7 @@ import re
 from flask import render_template, url_for, flash, redirect, request, Blueprint
 from loop import db
 from loop.collaborative_filter import CollaborativeFilter
-from loop.main.forms import GroupForm, cinema_list, MovieSearchForm, SelectGenreForm
+from loop.main.forms import GroupForm, cinema_list, MovieSearchForm, SelectGenreForm, ContactForm
 from loop.main.forms import LikeForm, DislikeForm, DeleteAllForm
 from loop.group_history import GroupHistory
 from loop.models import Movies, Preferences, GroupResults
@@ -12,6 +12,9 @@ from loop.algorithm import Algorithms
 from loop.movie_search import MovieSearch
 from loop.movie_categories import Genres
 import unidecode
+from loop import mail
+from flask_mail import Message
+
 # from loop.update_movie_db import UpdateMovieDatabase
 
 main = Blueprint('main', __name__)
@@ -231,3 +234,23 @@ def get_group_recommendation():
                                other_movies=other_movies)
     else:
         return redirect(url_for('main.group'))
+
+
+@main.route("/contact", methods=['POST', 'GET'])
+def contact():
+    # initialise form
+    contact_form = ContactForm()
+    # if form is completed, then end email
+    if contact_form.validate_on_submit():
+        send_email(request.form)
+        # redirect to watch page
+        return redirect(url_for('main.watch'))
+
+    return render_template('contact.html', form=contact_form)
+
+
+def send_email(message):
+    # send email to loop and sender email
+    email = Message(message.get('subject'), sender=message.get('email'), recipients=['loopfyp@gmail.com',
+                    message.get('email')], body=message.get('message'))
+    mail.send(email)
