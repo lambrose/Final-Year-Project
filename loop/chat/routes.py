@@ -36,7 +36,7 @@ def group_chat():
     # creating a chat room
     if room is None:
         # specify the maximum amount of rooms that can be created
-        for index in range(2):
+        for index in range(100):
             index = str(index)
             # check if this room has not been created, then create it
             if used_rooms.get(index) is None:

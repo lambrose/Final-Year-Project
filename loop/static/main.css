@@ -226,12 +226,14 @@ div.messages {
 {
     background-color: #FFFAFA;
     border-radius: 1.5vw;
+    padding-bottom: 20px;
 }
 
 .right_group_landing
 {
     background-color: #F5F5F5;
     border-radius: 1.5vw;
+    padding-bottom: 20px;
 }
 
 .chat_recommendations_scroll
