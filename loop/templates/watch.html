@@ -2,25 +2,27 @@
 {% block content %}
 
    <div class="col-8 mb-4">
-        <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#watch_i">Instructions</button>
+        <button type="button" class="btn" data-toggle="collapse" data-target="#watch_i"><i class="fas fa-info-circle"></i></button>
         <div id="watch_i" class="collapse">
         <br>
         <b> Watch Page Features:</b><br>
-        <b>1.</b> Search for movies: <br>
+        <ol>
+            <li><b>Search for movies:</b><br>
                   Please specify a movie in the search bar that you would like to watch. If we have that movie, then that movie will
                   be displayed on the screen with ten other recommended movies based on the movie description of the movie searched.
-                  However, if we do not have that movie, then a flash message will appear.<br><br>
-        <b>2.</b> Select movies by genres: <br>
+                  However, if we do not have that movie, then a flash message will appear.</li>
+            <li><b>Select movies by genres:</b><br>
                   Please select a type of movie genre from the drop down list. Once selected, a range of movies from that specific
-                  genre will appear on the page below the search bar.<br><br>
-        <b>3.</b> Vote/Rate movies: <br>
+                  genre will appear on the page below the search bar.</li>
+            <li><b>Vote/Rate movies:</b><br>
                   When a movie is clicked, a window will appear with the selected movie details. That window will contain a "Like"
                   and "Dislike" button. Press either button to illustrate your preference. These votes will be registered to your account
-                  and can be updated/ deleted on the profile page.<br><br>
-        <b>4.</b> Automatic movie recommendations: <br>
+                  and can be updated/ deleted on the profile page.</li>
+            <li><b>Automatic movie recommendations:</b><br>
                   Assuming you have voted on movies, our collaborative filter algorithm is running in the background to find similar
                   users accounts. When similar accounts are found, we use this data to recommend unseen movies to you. These movies
-                  will appear at the top of the page. The category heading is "Recommended".
+                  will appear at the top of the page. The category heading is "Recommended".</li>
+        </ol>
       </div>
     </div>
 
