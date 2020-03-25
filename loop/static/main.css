@@ -1,10 +1,18 @@
+html
+{
+  min-height: 100%;
+}
 body
 {
-  margin-top: 5rem;
-  background: #c7ccd1;
-  color: #2F4F4F;
+    margin-top: 5rem;
+    background: linear-gradient(to bottom, #000000 0%, #c7ccd1 80%) no-repeat;
+    color: #2F4F4F;
 }
 
+.white_text
+{
+    color: #ffffff;
+}
 
 .logo
 {
@@ -33,6 +41,14 @@ body
 
 .sidebar-section
 {
+  background: #ffffff;
+  padding: 10px 20px;
+  border: 1px solid #dddddd;
+  border-radius: 3px;
+  margin-bottom: 20px;
+}
+
+.log_reg_form {
   background: #ffffff;
   padding: 10px 20px;
   border: 1px solid #dddddd;
@@ -243,4 +259,40 @@ div.messages {
   overflow: auto;
   border-radius: 0.5vw;
   padding: 10px;
+}
+
+@media only screen
+and (min-device-width : 320px)
+and (max-device-width : 480px)
+{
+div.scrollmenu .movie_container
+{
+  display: inline-block;
+  color: white;
+  text-align: center;
+  padding: 2vw;
+  width: 25vw;
+  font-size: 1.8vw;
+}
+
+.section_heading {
+  font-size: 6vw;
+  padding-top: 1vw;
+}
+
+.profile_sections
+{
+  background-color: #ffffff;
+  height: 40vw;
+  overflow: scroll;
+  border-radius: 10px;
+}
+
+.profile_graph_section
+{
+  background-color: #ffffff;
+  height: 40vw;
+  border-radius: 10px;
+}
+
 }

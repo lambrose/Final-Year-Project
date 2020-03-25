@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block content %}
 <div class="col-md-8">
-    <div class="content-section">
+    <div class="log_reg_form">
         <form method="POST" action="">
             {{ form.hidden_tag() }}
             <fieldset class="form-group">
@@ -43,7 +43,7 @@
         </form>
     </div>
     <div class="border-top pt-3">
-        <small class="text-muted">
+        <small class="white_text">
             Create An Account? <a class="ml-2" href="{{ url_for('users.register') }}">Sign Up Now</a>
         </small>
     </div>

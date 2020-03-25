@@ -36,13 +36,13 @@ def cinema_list(cinema_movies):
 
 # watch feature, search bar
 class MovieSearchForm(FlaskForm):
-    search = StringField('Movie:', validators=[DataRequired(), Length(min=2, max=20)])
-    submit = SubmitField('Search')
+    search = StringField('Enter A Movie:', validators=[DataRequired(), Length(min=2, max=20)])
+    submit = SubmitField('Search Movie')
 
 
 # Dropdown for movie genres
 class SelectGenreForm(FlaskForm):
-    genre = SelectField('Select Genre:',
+    genre = SelectField('Select A Genre:',
                         choices=[('Select', 'Select'), ('Action', 'Action'), ('Adventure', 'Adventure'),
                                  ('Animation', 'Animation'), ('Comedy', 'Comedy'), ('Crime', 'Crime'),
                                  ('Documentary', 'Documentary'), ('Drama', 'Drama'), ('Family', 'Family'),
@@ -50,7 +50,7 @@ class SelectGenreForm(FlaskForm):
                                  ('Music', 'Music'), ('Mystery', 'Mystery'), ('Romance', 'Romance'),
                                  ('Science Fiction', 'Science Fiction'), ('Thriller', 'Thriller'),
                                  ('TV Movie', 'TV Movie'), ('War', 'War'), ('Western', 'Western')])
-    submit = SubmitField('Confirm')
+    submit = SubmitField('Search Genre')
 
 
 # specify if you like or dislike the movie

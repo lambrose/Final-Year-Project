@@ -5,11 +5,11 @@
           <div class="col-lg-6 col-sm-9 mt-4">
               <div class="row">
                 <div class="col-9">
-                      <legend class="border-bottom mb-4">Liked Movies</legend>
+                      <legend class="border-bottom mb-4 white_text">Liked Movies</legend>
                 </div>
                   <div class="col">
-                      <button type="button" class="btn profileHeadingBtn" data-toggle="collapse" data-target="#demol"><i class="fa fa-trash"></i></button>
-                        <div id="demol" class="collapse">
+                      <button type="button" class="btn profileHeadingBtn" data-toggle="collapse" data-target="#trash_all_iconl"><i class="fa fa-trash"></i></button>
+                        <div id="trash_all_iconl" class="collapse">
                              <form class="profileHeadingBtn" method='POST' action=''>
                                {{ delete_all_form.hidden_tag() }}
                                   <fieldset class='form-group'>
@@ -71,11 +71,11 @@
           <div class="col-lg-6 col-sm-9 mt-4">
               <div class="row">
                 <div class="col-9">
-                      <legend class="border-bottom mb-4">Disliked Movies</legend>
+                      <legend class="border-bottom mb-4 white_text">Disliked Movies</legend>
                 </div>
                   <div class="col">
-                      <button type="button" class="btn profileHeadingBtn" data-toggle="collapse" data-target="#demod"><i class="fa fa-trash"></i></button>
-                        <div id="demod" class="collapse">
+                      <button type="button" class="btn profileHeadingBtn" data-toggle="collapse" data-target="#trash_all_icond"><i class="fa fa-trash"></i></button>
+                        <div id="trash_all_icond" class="collapse">
                              <form class="profileHeadingBtn" method='POST' action=''>
                                {{ delete_all_form.hidden_tag() }}
                                   <fieldset class='form-group'>
@@ -140,11 +140,11 @@
           <div class="col-lg-6 col-sm-9 mt-4">
               <div class="row">
                 <div class="col-9">
-                      <legend class="border-bottom mb-4">Group History</legend>
+                      <legend class="border-bottom mb-4 white_text">Group History</legend>
                 </div>
                   <div class="col">
-                      <button type="button" class="btn profileHeadingBtn" data-toggle="collapse" data-target="#demog"><i class="fa fa-trash"></i></button>
-                        <div id="demog" class="collapse">
+                      <button type="button" class="btn profileHeadingBtn" data-toggle="collapse" data-target="#trash_all_icong"><i class="fa fa-trash"></i></button>
+                        <div id="trash_all_icong" class="collapse">
                              <form class="profileHeadingBtn" method='POST' action=''>
                                {{ delete_all_form.hidden_tag() }}
                                   <fieldset class='form-group'>
@@ -230,7 +230,7 @@
               </div>
           </div>
           <div class="col-lg-6 col-sm-9 mt-4">
-              <legend class="border-bottom mb-4">Group Algorithms Performances</legend>
+              <legend class="border-bottom mb-4 white_text">Group Algorithms Performances</legend>
               <div class="profile_graph_section ct-chart ct-golden-section"></div>
                 <script>
                     new Chartist.Bar('.ct-chart',
@@ -246,6 +246,7 @@
                           }
                      });
             </script>
+          </div>
           </div>
         </div>
     </div>

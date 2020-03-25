@@ -3,7 +3,7 @@
 
    <div class="col-8 mb-4">
         <button type="button" class="btn" data-toggle="collapse" data-target="#watch_i"><i class="fas fa-info-circle"></i></button>
-        <div id="watch_i" class="collapse">
+        <div id="watch_i" class="collapse white_text">
         <br>
         <b> Watch Page Features:</b><br>
         <ol>
@@ -30,7 +30,7 @@
         <form method="POST" action="/movie_recommendation">
             {{ form.hidden_tag() }}
             <fieldset class="form-group">
-                    {{ form.search.label(class="form-control-label") }}
+                    {{ form.search.label(class="form-control-label white_text") }}
                     {% if form.search.errors %}
                         {{ form.search(class="form-control form-control-lg is-invalid") }}
                         <div class="invalid-feedback">
@@ -52,7 +52,7 @@
         <form method="POST" action="">
                 {{ genre_form.hidden_tag() }}
                 <fieldset class="form-group">
-                    {{ genre_form.genre.label(class="form-control-label") }}
+                    {{ genre_form.genre.label(class="form-control-label white_text") }}
 
                     {% if genre_form.genre.errors %}
                         {{ genre_form.genre(class="form-control form-control-lg is-invalid") }}
@@ -131,7 +131,7 @@
     <div class="container">
     {% if selected_genre %}
         {% for category, movies in selected_genre.items() %}
-            <h1 class="section_heading">{{category}}</h1>
+            <h1 class="section_heading white_text">{{category}}</h1>
                 {% if movies %}
                 <div class="scrollmenu">
                   {% for movie in movies %}
@@ -159,7 +159,7 @@
     <div class="container">
     {% if collaborative_filter %}
         {% for category, movies in collaborative_filter.items() %}
-            <h1 class="section_heading">{{category}}</h1>
+            <h1 class="section_heading white_text">{{category}}</h1>
             <div class="scrollmenu">
               {% for movie_container in movies %}
                   {% for movie in movie_container %}
@@ -265,11 +265,11 @@ function openNav()
     // check the size of the screen to determine the size of the side bar
     if(screen.width > 450)
     {
-        document.getElementById("profile_sidebar_id").style.width = "400px";
+        document.getElementById("profile_sidebar_id").style.width = "25vw";
     }
     else
     {
-        document.getElementById("profile_sidebar_id").style.width = "200px";
+        document.getElementById("profile_sidebar_id").style.width = "80vw";
     }
 }
 
