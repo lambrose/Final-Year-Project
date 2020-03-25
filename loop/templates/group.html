@@ -6,7 +6,7 @@
     <form method="POST" action="">
         {{ people_form.hidden_tag() }}
         <fieldset class="form-group">
-                {{ people_form.amount.label(class="form-control-label") }}
+                {{ people_form.amount.label(class="form-control-label white_text") }}
                 {% if people_form.amount.errors %}
                     {{ people_form.amount(class="form-control form-control-lg is-invalid") }}
                     <div class="invalid-feedback">
@@ -164,7 +164,7 @@
 
 <div class="col-md-4">
     <div class="sidebar-section">
-        <h3 class="border-bottom mb-4">Cinema Movies</h3>
+        <h3 class="border-bottom mb-4">IMDb Top Rated Movies</h3>
         <p id="no_movies"></p>
         {% if group_size %}
              <form id="cinema_movie_check" method="POST" action="">

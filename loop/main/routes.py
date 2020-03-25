@@ -2,12 +2,13 @@ import re
 from flask import render_template, url_for, flash, redirect, request, Blueprint
 from loop import db
 from loop.collaborative_filter import CollaborativeFilter
+from loop.imdb_movies import ImdbMovies
 from loop.main.forms import GroupForm, cinema_list, MovieSearchForm, SelectGenreForm, ContactForm
 from loop.main.forms import LikeForm, DislikeForm, DeleteAllForm
 from loop.group_history import GroupHistory
 from loop.models import Movies, Preferences, GroupResults
 from flask_login import current_user, login_required
-from loop.cinema import CinemaMovies
+# from loop.cinema import CinemaMovies
 from loop.algorithm import Algorithms
 from loop.movie_search import MovieSearch
 from loop.movie_categories import Genres
@@ -177,16 +178,27 @@ def group_landing():
     # render a landing page, for a user to specify the group options
     return render_template('group_landing.html', title='Group Landing')
 
+# Reason for not using the cinema data, is because the cinemas are closed, so there is none
+# @main.route("/group", methods=['GET', 'POST'])
+# @login_required
+# def group():
+#     # get the cinema form check list with all the current movie sin the cinema
+#     cinema_movies = CinemaMovies()
+#     people_form = GroupForm()
+#     cinema_form = cinema_list(cinema_movies.get_movies())
+#     return render_template('group.html', title='Group', people_form=people_form, group_size=people_form.amount.data,
+#                            cinema_form=cinema_form)
+
 
 @main.route("/group", methods=['GET', 'POST'])
 @login_required
 def group():
     # get the cinema form check list with all the current movie sin the cinema
-    cinema_movies = CinemaMovies()
+    imdb_movies = ImdbMovies()
     people_form = GroupForm()
-    cinema_form = cinema_list(cinema_movies.get_movies())
+    imdb_form = cinema_list(imdb_movies.get_movies())
     return render_template('group.html', title='Group', people_form=people_form, group_size=people_form.amount.data,
-                           cinema_form=cinema_form)
+                           cinema_form=imdb_form)
 
 
 # This is used for the access the eye cinema movie website
@@ -197,11 +209,49 @@ def format_movie_title(movie):
     # replacing spaces with a "-"
     return unaccented_string.replace(' ', '-')
 
+# Reason for not using the cinema data, is because the cinemas are closed, so there is none
+# @main.route("/group_recommendation", methods=['GET', 'POST'])
+# @login_required
+# def get_group_recommendation():
+#     cinema_movies = CinemaMovies()
+#     cinema_details = cinema_movies.get_movie_details()
+#     group_ratings_form = []
+#     # Getting all the values from the group form
+#     for index in range(len(request.form)):
+#         try:
+#             group_ratings_form.append(request.form['input_rating_' + str(index)])
+#         except KeyError:
+#             break
+#
+#     # Checking if the form was completed
+#     if group_ratings_form:
+#         # Get the results from the algorithms
+#         algorithm = Algorithms(group_ratings_form)
+#         movies = algorithm.run()
+#         top_movie, other_movies = [], []
+#         counter = 0
+#         for movie in movies:
+#             cinema_url = cinema_details[1]
+#             movie_url = cinema_url + "movie/" + format_movie_title(movie)
+#             for title, movie_details in cinema_details[0].items():
+#                 if title == movie["movie"]:
+#                     for image, times in movie_details.items():
+#                         # Separating the most recommended movie and image
+#                         if counter == 0:
+#                             top_movie = [title, cinema_url + image, times, movie["score"], movie_url]
+#                         else:
+#                             other_movies.append((title, cinema_url + image, times, movie["score"], movie_url))
+#             counter += 1
+#         return render_template('group_recommendation.html', title='Group recommendation', top_movie=top_movie,
+#                                other_movies=other_movies)
+#     else:
+#         return redirect(url_for('main.group'))
+
 
 @main.route("/group_recommendation", methods=['GET', 'POST'])
 @login_required
 def get_group_recommendation():
-    cinema_movies = CinemaMovies()
+    cinema_movies = ImdbMovies()
     cinema_details = cinema_movies.get_movie_details()
     group_ratings_form = []
     # Getting all the values from the group form
@@ -219,16 +269,13 @@ def get_group_recommendation():
         top_movie, other_movies = [], []
         counter = 0
         for movie in movies:
-            cinema_url = cinema_details[1]
-            movie_url = cinema_url + "movie/" + format_movie_title(movie)
-            for title, movie_details in cinema_details[0].items():
+            for title, details in cinema_details.items():
                 if title == movie["movie"]:
-                    for image, times in movie_details.items():
-                        # Separating the most recommended movie and image
-                        if counter == 0:
-                            top_movie = [title, cinema_url + image, times, movie["score"], movie_url]
-                        else:
-                            other_movies.append((title, cinema_url + image, times, movie["score"], movie_url))
+                    # Separating the most recommended movie and image
+                    if counter == 0:
+                        top_movie = [title, details[0], details[1], details[2], movie["score"], details[3]]
+                    else:
+                        other_movies.append((title, details[0], details[1], details[2], movie["score"], details[3]))
             counter += 1
         return render_template('group_recommendation.html', title='Group recommendation', top_movie=top_movie,
                                other_movies=other_movies)
