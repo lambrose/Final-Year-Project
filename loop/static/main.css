@@ -295,4 +295,12 @@ div.scrollmenu .movie_container
   border-radius: 10px;
 }
 
+div.messages {
+  background-color: #ffffff;
+  height: 40vw;
+  overflow: auto;
+  border-radius: 0.5vw;
+  padding: 10px;
+}
+
 }
