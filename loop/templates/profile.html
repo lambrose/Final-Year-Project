@@ -7,7 +7,7 @@
                 <div class="col-9">
                       <legend class="border-bottom mb-4 white_text">Liked Movies</legend>
                 </div>
-                  <div class="col">
+                  <div class="col mb-2">
                       <button type="button" class="btn profileHeadingBtn" data-toggle="collapse" data-target="#trash_all_iconl"><i class="fa fa-trash"></i></button>
                         <div id="trash_all_iconl" class="collapse">
                              <form class="profileHeadingBtn" method='POST' action=''>
@@ -24,7 +24,7 @@
                                         {{ delete_all_form.delete_records(value="like") }}
                                    {% endif %}
                                    </fieldset>
-                               {{ delete_all_form.submit(class='btn btn-outline-info') }}
+                               {{ delete_all_form.submit(class='btn btn-outline-danger') }}
                             </form>
                          </div>
                   </div>
@@ -73,7 +73,7 @@
                 <div class="col-9">
                       <legend class="border-bottom mb-4 white_text">Disliked Movies</legend>
                 </div>
-                  <div class="col">
+                  <div class="col mb-2">
                       <button type="button" class="btn profileHeadingBtn" data-toggle="collapse" data-target="#trash_all_icond"><i class="fa fa-trash"></i></button>
                         <div id="trash_all_icond" class="collapse">
                              <form class="profileHeadingBtn" method='POST' action=''>
@@ -90,7 +90,7 @@
                                         {{ delete_all_form.delete_records(value="dislike") }}
                                    {% endif %}
                                    </fieldset>
-                               {{ delete_all_form.submit(class='btn btn-outline-info') }}
+                               {{ delete_all_form.submit(class='btn btn-outline-danger') }}
                             </form>
                          </div>
                   </div>
@@ -142,7 +142,7 @@
                 <div class="col-9">
                       <legend class="border-bottom mb-4 white_text">Group History</legend>
                 </div>
-                  <div class="col">
+                  <div class="col mb-2">
                       <button type="button" class="btn profileHeadingBtn" data-toggle="collapse" data-target="#trash_all_icong"><i class="fa fa-trash"></i></button>
                         <div id="trash_all_icong" class="collapse">
                              <form class="profileHeadingBtn" method='POST' action=''>
@@ -159,7 +159,7 @@
                                         {{ delete_all_form.delete_records(value="history") }}
                                    {% endif %}
                                    </fieldset>
-                               {{ delete_all_form.submit(class='btn btn-outline-info') }}
+                               {{ delete_all_form.submit(class='btn btn-outline-danger') }}
                             </form>
                          </div>
                   </div>

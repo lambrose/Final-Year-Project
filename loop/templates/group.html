@@ -24,7 +24,7 @@
     </form>
 
     <form class="form-group" id="ratings_form" action="/group_recommendation" method="post"></form>
-    <button class="btn btn-outline-info" type="submit" id="submit_rating" form="ratings_form">Submit</button>
+    <button class="btn btn-info mb-4" type="submit" id="submit_rating" form="ratings_form">Submit</button>
 
     <script>
     // Set movie rating submit form to invisible as the checkbox has not been completed
@@ -46,6 +46,7 @@
            // if there are movies checked
           if(movies.length > 1)
           {
+              document.getElementById("demo").innerHTML = "";
               // make form button visible and change the name of the form button to 'reset'
               document.getElementById('submit_rating').style.visibility = 'visible';
               document.getElementById("cinema_checked").value="Reset"
@@ -55,6 +56,7 @@
           else
           {
             // if no movies are selected, return an empty array
+             document.getElementById("demo").innerHTML = "Please select at least two movies";
              return movies
           }
       }
@@ -188,6 +190,7 @@
                     {{ cinema_form.submit(id="cinema_checked", class="btn btn-outline-info") }}
                 </div>
             </form>
+        <p id="demo" style="color:red"></p>
         <script type="text/javascript">
         //Determine all checkboxes in a form
             var checks = document.querySelectorAll(".checkbox");
