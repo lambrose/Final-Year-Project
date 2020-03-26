@@ -46,7 +46,7 @@ body
 
 .sidebar-section
 {
-  background: #ffffff;
+  background: linear-gradient(to bottom, #00ffff 0%, #ffffff 100%);
   padding: 10px 20px;
   border: 1px solid #dddddd;
   border-radius: 3px;
@@ -139,7 +139,7 @@ div.scrollmenu .movie_container:hover
   z-index: 1;
   top: 50px;
   right: 0;
-  background-color: #ffffff;
+  background: linear-gradient(to bottom, #ffffff 0%, #8bffff 100%);
   overflow-x: hidden;
   transition: 0.5s;
   padding-top: 60px;

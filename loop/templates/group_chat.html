@@ -3,7 +3,7 @@
 <div class="container">
     <legend class="border-bottom mt-3">
     {% if num_people == -1 %}
-        <h1>Chat room {{ room }}</h1>
+        <h1 class="white_text">Chat room {{ room }}</h1>
     {% else %}
         <h1 class="white_text">Chat room {{ room }}</h1> <p class="white_text">voters: {{ num_people }} users</p>
     {% endif %}
@@ -34,7 +34,7 @@
     <div id="display_cinema_form">
         {%if render_form == 1%}
             <div id="cinema_movie_form" class="sidebar-section">
-                <h3 class="border-bottom">Cinema Movies</h3>
+                <h3 class="border-bottom">IMDb Top Rated Movies</h3>
                 <p id="no_movies"></p>
                  <form id="cinema_movie_check" method="POST" action="">
                     {{ cinema_form.hidden_tag() }}
@@ -63,7 +63,7 @@
             <form class="form-group" id="individual_ratings_form" action="/submit_rated_movies" method="post">
                 <input type="hidden" class="form-control input-lg" name="room_rec" value="{{ room }}">
             </form>
-            <button class="btn btn-outline-info" type="submit" id="submit_individual_rating" form="individual_ratings_form">Submit</button>
+            <button class="btn btn-info" type="submit" id="submit_individual_rating" form="individual_ratings_form">Submit</button>
     </div>
 
     <div id="display_recommendations" class="text-center">
@@ -287,6 +287,7 @@
             img.src = data[index][1];
 
             var h5_year = document.createElement("H5");
+            h5_year.className = "mt-2";
             var movie_year = document.createTextNode("Released Year: " + data[index][2]);
             h5_year.appendChild(movie_year);
 
