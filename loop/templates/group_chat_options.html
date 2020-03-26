@@ -3,15 +3,26 @@
 <div class="container">
     <div class="row">
         <div class="col-lg-6 col-sm-9 mt-4 px-md-5 left_group_landing">
-            <form id="create_room_form" action="/group_chat">
-                <legend class="border-bottom mt-3"><b>Create a chat room</b></legend>
-                <div class="form-group">
-                    <label for="amount_of_people">Specify the amount of people entering the group that are voting:</label>
-                    <input type="number" class="form-control" id="amount_of_people" placeholder="Enter..." name="num_people" required>
-                </div>
-            </form>
-
-            <button type="submit" class="btn btn-success mb-2" form="create_room_form">Create</button>
+            <form id="create_room_form" method='POST' action='/group_chat'>
+                    {{ create_form.hidden_tag() }}
+                 <legend class="border-bottom mt-3"><b>Create a chat room</b></legend>
+                    <fieldset class='form-group'>
+                       {{ create_form.voters.label(class="form-control-label") }}
+                       {% if create_form.voters.errors %}
+                            {{ create_form.voters(class='form-control form-control-lg is-invalid') }}
+                            <div class='invalid-feedback'>
+                                {% for error in create_form.voters.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ create_form.voters(class='form-control form-control-lg') }}
+                        {% endif %}
+                    </fieldset>
+                    <div class='form-group'>
+                        {{ create_form.submit(class='btn btn-success') }}
+                    </div>
+                </form>
 
             <button type="button" class="btn btn-info mb-2" data-toggle="collapse" data-target="#create_i">Instructions</button>
             <div id="create_i" class="collapse">
@@ -22,16 +33,28 @@
                 </ol>
             </div>
         </div>
-        <div class="col-lg-6 col-sm-9 mt-4 px-md-5 right_group_landing">
-            <form id="join_room_form" action="/group_chat">
-                <legend class="border-bottom mt-3"><b>Join a chat room</b></legend>
-                <div class="form-group">
-                    <label for="room_number">Specify the room number to enter:</label>
-                    <input type="number" class="form-control" id="room_number" placeholder="Enter..." name="room" required>
-                </div>
-            </form>
 
-            <button type="submit" class="btn btn-primary mb-2" form="join_room_form">Join</button>
+        <div class="col-lg-6 col-sm-9 mt-4 px-md-5 right_group_landing">
+            <form id="join_room_form" method='POST' action='/group_chat'>
+                    {{ join_form.hidden_tag() }}
+                 <legend class="border-bottom mt-3"><b>Join a chat room</b></legend>
+                    <fieldset class='form-group'>
+                       {{ join_form.room.label(class="form-control-label") }}
+                       {% if join_form.room.errors %}
+                            {{ join_form.room(class='form-control form-control-lg is-invalid') }}
+                            <div class='invalid-feedback'>
+                                {% for error in join_form.room.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ join_form.room(class='form-control form-control-lg') }}
+                        {% endif %}
+                    </fieldset>
+                    <div class='form-group'>
+                        {{ join_form.submit(class='btn btn-primary') }}
+                    </div>
+                </form>
 
             <button type="button" class="btn btn-info mb-2" data-toggle="collapse" data-target="#join_i">Instructions</button>
         <div id="join_i" class="collapse">

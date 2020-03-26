@@ -82,8 +82,6 @@ def watch():
 def movie_recommendation():
     # when the form is submitted, this method gets the value of the form request
     movie = request.form.get("search")
-    like_form = LikeForm()
-    dislike_form = DislikeForm()
     if movie:
         # search for the movie or a bit of of the movie in the db
         search_result = Movies.query.filter(Movies.title.ilike('%' + movie + '%')).first()
