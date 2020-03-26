@@ -119,10 +119,27 @@ class CollaborativeFilter:
         similar_users = self.get_similar_users(users)
         similar_users_data = self.get_similar_user_data(similar_users)
         movies = self.get_avg_vote(similar_users_data)
+        genres = {'action': ' Action', 'adventure': 'Adventure', 'animation': 'Animation', 'comedy': 'Comedy',
+                  'crime': 'Crime', 'documentary': 'Documentary', 'drama': 'Drama', 'family': 'Family',
+                  'fantasy': 'Fantasy', 'history': 'History', 'horror': 'Horror', 'music': 'Music',
+                  'mystery': 'Mystery', 'romance': 'Romance', 'science_fiction': 'Science Fiction',
+                  'thriller': 'Thriller', 'tv_movie': 'TV Movie', 'war': 'War', 'western': 'Western'}
         if movies:
             # Query the db, to get the entry and it's details
-            movies = [list(Movies.query.filter_by(title=movie)) for movie in movies]
-            return {'Recommended': movies}
+            # movies = [list(Movies.query.filter_by(title=movie)) for movie in movies]
+            movie_matches = []
+            for movie in movies:
+                movie_object = list(Movies.query.filter_by(title=movie))
+                genre_string = ""
+                if movie_object:
+                    movie = movie_object[0]
+                    for genre_key, genre_value in genres.items():
+                        if getattr(movie, genre_key) == 1:
+                            genre_string += genre_value + ", "
+                    entry = (movie.title, movie.overview, movie.image, movie.popularity, movie.release_date.date(), genre_string[:-2])
+                    movie_matches.append(entry)
+
+            return {'Recommended': movie_matches}
         else:
             return None
 

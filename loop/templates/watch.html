@@ -161,21 +161,20 @@
         {% for category, movies in collaborative_filter.items() %}
             <h1 class="section_heading white_text">{{category}}</h1>
             <div class="scrollmenu">
-              {% for movie_container in movies %}
-                  {% for movie in movie_container %}
+              {% for movie in movies %}
                     <div class="movie_container">
-                        <a id="{{ movie.title }}1" href="#{{ movie.title }}1">
-                            <input type="image" src="{{movie.image}}" data-description="<h1>{{ movie.title }}</h1>
-                                                 <h6><b>Description:</b> {{ movie.overview }}</h6>
-                                                 <h6><b>Popularity:</b> {{ movie.popularity }}</h6>
-                                                 <h6><b>Release Date:</b> {{ movie.release_date.date() }}</h6>"
+                        <a id="{{ movie[0] }}1" href="#{{ movie[0] }}1">
+                            <input type="image" src="{{movie[2]}}" data-description="<h1>{{ movie[0] }}</h1>
+                                                 <h6><b>Description:</b> {{ movie[1] }}</h6>
+                                                 <h6><b>Popularity:</b> {{ movie[3]}}</h6>
+                                                 <h6><b>Release Date:</b> {{ movie[4] }}</h6>
+                                                 <h6><b>Genre:</b> {{ movie[5]}}</h6>"
                                    value="{{already_voted.get(movie.title)}}"
                                onclick="movie_content(this)" class="image-button img-fluid img-thumbnail"/>
                         </a>
                         <p class="movie_title_scroll">{{ movie.title }}</p>
                     </div>
-                   {% endfor %}
-              {% endfor %}
+                {% endfor %}
             </div>
         {% endfor %}
      {% endif %}
@@ -188,11 +187,12 @@
             <div class="scrollmenu">
               {% for movie in movies %}
                 <div class="movie_container">
-                    <a id="{{ movie.title }}2" href="#{{ movie.title }}2">
-                        <input type="image" src="{{movie.image}}" data-description="<h1>{{ movie.title }}</h1>
-                                             <h6><b>Description:</b> {{ movie.overview }}</h6>
-                                             <h6><b>Popularity:</b> {{ movie.popularity }}</h6>
-                                             <h6><b>Release Date:</b> {{ movie.release_date.date() }}</h6>"
+                    <a id="{{ movie[1] }}2" href="#{{ movie[1] }}2">
+                        <input type="image" src="{{movie[3]}}" data-description="<h1>{{ movie[1] }}</h1>
+                                             <h6><b>Description:</b> {{ movie[2] }}</h6>
+                                             <h6><b>Popularity:</b> {{ movie[4] }}</h6>
+                                             <h6><b>Release Date:</b> {{ movie[5].date() }}</h6>
+                                             <h6><b>Genre:</b> {{ movie[6]}}</h6>"
                                value="{{already_voted.get(movie.title)}}"
                            onclick="movie_content(this)" class="image-button img-fluid img-thumbnail"/>
                     </a>

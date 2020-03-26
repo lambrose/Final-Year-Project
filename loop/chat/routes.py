@@ -1,11 +1,12 @@
-import re
-import unidecode
+# import re
+# import unidecode
 from flask import render_template, request, redirect, url_for, Blueprint
 from flask_socketio import join_room, leave_room
 from loop import socketio
 from flask_login import current_user
 from loop.algorithm import Algorithms
-from loop.cinema import CinemaMovies
+# from loop.cinema import CinemaMovies
+from loop.imdb_movies import ImdbMovies
 from loop.main.forms import cinema_list
 from collections import defaultdict
 
@@ -21,6 +22,42 @@ def group_chat_options():
     return render_template("group_chat_options.html")
 
 
+# @chat.route('/group_chat')
+# def group_chat():
+#     # get the max number of users that can vote in the group
+#     num_people = request.args.get('num_people')
+#     # specify the room entering
+#     room = request.args.get('room')
+#     # username is equal to the current person logged in
+#     username = current_user.first_name + " " + current_user.last_name
+#     # get current list of movies in the cinema
+#     cinema_movies = CinemaMovies()
+#     cinema_form = cinema_list(cinema_movies.get_movies())
+#
+#     # creating a chat room
+#     if room is None:
+#         # specify the maximum amount of rooms that can be created
+#         for index in range(100):
+#             index = str(index)
+#             # check if this room has not been created, then create it
+#             if used_rooms.get(index) is None:
+#                 room = index
+#                 # store the amount of voters per room
+#                 used_rooms[room].append(num_people)
+#                 return render_template('group_chat.html', username=username, room=room, render_form=1,
+#                                        cinema_form=cinema_form, num_people=num_people)
+#         #  all rooms are occupied
+#         if room is None:
+#             return redirect(url_for('chat.group_chat_options'))
+#
+#     # enter a chat room with valid room number
+#     elif used_rooms.get(room):
+#         return render_template('group_chat.html', username=username, room=room, render_form=1,
+#                                cinema_form=cinema_form, num_people=used_rooms.get(room)[0])
+#     else:
+#         return redirect(url_for('chat.group_chat_options'))
+
+
 @chat.route('/group_chat')
 def group_chat():
     # get the max number of users that can vote in the group
@@ -30,8 +67,8 @@ def group_chat():
     # username is equal to the current person logged in
     username = current_user.first_name + " " + current_user.last_name
     # get current list of movies in the cinema
-    cinema_movies = CinemaMovies()
-    cinema_form = cinema_list(cinema_movies.get_movies())
+    imdb_movies = ImdbMovies()
+    cinema_form = cinema_list(imdb_movies.get_movies())
 
     # creating a chat room
     if room is None:
@@ -100,34 +137,51 @@ def submit_rated_movies():
                            num_people=-1)
 
 
-def format_movie_title(movie):
-    # Removing unwanted characters in the movie name except for a hyphen '-'
-    format_title = re.sub(r'[^\w\s-]', '', movie["movie"])
-    unaccented_string = unidecode.unidecode(format_title)
-    # replacing spaces with a "-"
-    return unaccented_string.replace(' ', '-')
+# def format_movie_title(movie):
+#     # Removing unwanted characters in the movie name except for a hyphen '-'
+#     format_title = re.sub(r'[^\w\s-]', '', movie["movie"])
+#     unaccented_string = unidecode.unidecode(format_title)
+#     # replacing spaces with a "-"
+#     return unaccented_string.replace(' ', '-')
+
+
+# @socketio.on('send_movie_recommendations')
+# def handle_send_recommendations_event(data):
+#     # get cinema list
+#     cinema_movies = CinemaMovies()
+#     cinema_details = cinema_movies.get_movie_details()
+#     # pass in the list of rated movies into the algorithm class
+#     algorithm = Algorithms(rated_movies.get(data['room']))
+#     movies = algorithm.run()
+#     # filter movies from most recommended to other
+#     # top_movie, other_movies = [], []
+#     all_movies = []
+#     counter = 0
+#     for movie in movies:
+#         cinema_url = cinema_details[1]
+#         movie_url = cinema_url + "movie/" + format_movie_title(movie)
+#         for title, movie_details in cinema_details[0].items():
+#             if title == movie["movie"]:
+#                 for image, times in movie_details.items():
+#                     all_movies.append((title, cinema_url + image, movie["score"], movie_url))
+#         counter += 1
+#     socketio.emit('receive_movie_recommendations', all_movies, room=data['room'])
 
 
 @socketio.on('send_movie_recommendations')
 def handle_send_recommendations_event(data):
-    # get cinema list
-    cinema_movies = CinemaMovies()
-    cinema_details = cinema_movies.get_movie_details()
+    # get imdb list
+    imdb_movies = ImdbMovies()
+    imdb_details = imdb_movies.get_movie_details()
     # pass in the list of rated movies into the algorithm class
     algorithm = Algorithms(rated_movies.get(data['room']))
     movies = algorithm.run()
-    # filter movies from most recommended to other
-    # top_movie, other_movies = [], []
     all_movies = []
-    counter = 0
     for movie in movies:
-        cinema_url = cinema_details[1]
-        movie_url = cinema_url + "movie/" + format_movie_title(movie)
-        for title, movie_details in cinema_details[0].items():
+        for title, details in imdb_details.items():
+            # find a movie match before adding the value to a list
             if title == movie["movie"]:
-                for image, times in movie_details.items():
-                    all_movies.append((title, cinema_url + image, movie["score"], movie_url))
-        counter += 1
+                all_movies.append((title, details[0], details[1], details[2], movie["score"], details[3]))
     socketio.emit('receive_movie_recommendations', all_movies, room=data['room'])
 
 

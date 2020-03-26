@@ -82,6 +82,8 @@ def watch():
 def movie_recommendation():
     # when the form is submitted, this method gets the value of the form request
     movie = request.form.get("search")
+    like_form = LikeForm()
+    dislike_form = DislikeForm()
     if movie:
         # search for the movie or a bit of of the movie in the db
         search_result = Movies.query.filter(Movies.title.ilike('%' + movie + '%')).first()
@@ -251,8 +253,8 @@ def format_movie_title(movie):
 @main.route("/group_recommendation", methods=['GET', 'POST'])
 @login_required
 def get_group_recommendation():
-    cinema_movies = ImdbMovies()
-    cinema_details = cinema_movies.get_movie_details()
+    imdb_movies = ImdbMovies()
+    imdb_details = imdb_movies.get_movie_details()
     group_ratings_form = []
     # Getting all the values from the group form
     for index in range(len(request.form)):
@@ -269,7 +271,7 @@ def get_group_recommendation():
         top_movie, other_movies = [], []
         counter = 0
         for movie in movies:
-            for title, details in cinema_details.items():
+            for title, details in imdb_details.items():
                 if title == movie["movie"]:
                     # Separating the most recommended movie and image
                     if counter == 0:

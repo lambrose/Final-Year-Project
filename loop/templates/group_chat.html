@@ -273,36 +273,48 @@
         var row_divs = document.createElement("div");
         for(index=0; index<data.length; index++)
         {
+            //creating html tags
             var h1 = document.createElement("H1");
             var position = index + 1;
             var text_score = document.createTextNode("Recommendation: " + position);
             h1.appendChild(text_score);
 
-            var h2 = document.createElement("H2");
-            var text_0 = document.createTextNode(data[index][0]);
-            h2.appendChild(text_0);
+            var h2_title = document.createElement("H2");
+            var movie_title = document.createTextNode(data[index][0]);
+            h2_title.appendChild(movie_title);
 
             var img = document.createElement("img");
             img.src = data[index][1];
 
-            var h4 = document.createElement("H4");
-            var text_2 = document.createTextNode("Recommendation score: " + data[index][2]);
-            h4.appendChild(text_2);
+            var h5_year = document.createElement("H5");
+            var movie_year = document.createTextNode("Released Year: " + data[index][2]);
+            h5_year.appendChild(movie_year);
+
+            var h5_rating = document.createElement("H5");
+            var movie_rating = document.createTextNode("IMDb Rating Score: " + data[index][3]);
+            h5_rating.appendChild(movie_rating);
+
+            var h4_rec_score = document.createElement("H4");
+            var recommendation_score = document.createTextNode("Recommendation score: " + data[index][4]);
+            h4_rec_score.appendChild(recommendation_score);
 
             var create_link = document.createElement('a');
-            var create_link_text = document.createTextNode("Eye cinema");
-            create_link.setAttribute('href', data[index][3]);
+            var create_link_text = document.createTextNode("IMDb Official Page");
+            create_link.setAttribute('href', data[index][5]);
             create_link.appendChild(create_link_text);
 
+            //add spacing
             var br_1 = document.createElement("br");
             var br_2 = document.createElement("br");
             var br_3 = document.createElement("br");
             var br_4 = document.createElement("br");
 
             row_divs.appendChild(h1);
-            row_divs.appendChild(h2);
+            row_divs.appendChild(h2_title);
             row_divs.appendChild(img);
-            row_divs.appendChild(h4);
+            row_divs.appendChild(h5_year);
+            row_divs.appendChild(h5_rating);
+            row_divs.appendChild(h4_rec_score);
             row_divs.appendChild(create_link);
             row_divs.appendChild(br_1);
             row_divs.appendChild(br_2);
