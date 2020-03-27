@@ -26,8 +26,8 @@ def cinema_list(cinema_movies):
     movie_choices = [(movie, movie) for movie in cinema_movies]
     options = MultiCheckboxField('Label', choices=movie_choices)
     # calling a javascript function button when clicked
-    submit = SubmitField("Confirm", render_kw={"onclick": "movies_selected()"})
-    send = SubmitField("Confirm")
+    submit = SubmitField("Confirm Movies", render_kw={"onclick": "movies_selected()"})
+    send = SubmitField("Confirm Movie")
     setattr(CinemaForm, "options", options)
     setattr(CinemaForm, "submit", submit)
     setattr(CinemaForm, "send", send)

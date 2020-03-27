@@ -5,7 +5,7 @@
         <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#group_i"><i class="fas fa-info-circle"></i></button>
         <div id="group_i" class="collapse white_text">
         <br>
-        <b> How we determine our group recommendation:</b><br>
+        <b> How we determine a group recommendation:</b><br>
             <ol>
                 <li>We have designed and implemented nine algorithms for this recommendation.<br>
                     <ul><li>Additive Utilitarian</li>
@@ -18,15 +18,15 @@
                         <li>Most Pleasure</li>
                         <li>Average without Misery</li>
                     </ul></li>
-                <li>All nine algorithms are run at once. Then the top results are then taken from each algorithm.</li>
-                <li>Then the movie that has occurred the most from the individual results is determined as the most suitable movie.</li>
+                <li>All nine algorithms are executed. Then the top results are then taken from each algorithm.</li>
+                <li>The movie that has occurred the most from the individual results is determined as the most suitable movie.</li>
             </ol>
       </div>
     </div>
     <div class="row">
           <div class="col-lg-6 col-sm-9 mt-4 px-md-5 left_group_landing">
               <legend class="border-bottom mt-3"><b>Choice 1</b></legend>
-              <h5>All group members can complete a recommendation on this account</h5>
+              <h5>All group members can complete a group recommendation on this account.</h5>
             <a class="btn btn-success" href="{{ url_for('main.group') }}">Group</a>
 
               <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#option_1">Instructions</button>
@@ -36,22 +36,22 @@
                     <li>Please specify how many people are in the group, that will be voting on their preferred movie.</li>
                     <li>Then please select the movies that you would like to watch. Note, each member of the group can only select a maximum of one movie.
                        E.g. If there are 3 people in the group, then only a maximum of 3 movies can be selected. Then confirm your
-                       selection by clicking "confirm".</li>
+                       selection by clicking "Confirm Movies".</li>
                     <li>In the table provided, each user should assign a preference score from 1 to 10 across all movies. 10 being the
-                       most preferred movie and 1 being the least preferred movie. Then confirm your inputs by clicking "submit".</li>
+                       most preferred movie and 1 being the least preferred movie. Then confirm your inputs by clicking "Confirm Inputs".</li>
                   </ol>
               </div>
           </div>
         <div class="col-lg-6 col-sm-9 mt-4 px-md-5 right_group_landing">
             <legend class="border-bottom mt-3"><b>Choice 2</b></legend>
-            <h5>A group can create a chat to complete a recommendation on their individual accounts</h5>
+            <h5>A group can create a chat to complete a group recommendation on their individual accounts.</h5>
 
             <a class="btn btn-success" href="{{ url_for('chat.group_chat_options') }}">Group chat</a>
 
               <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#option_2">Instructions</button>
               <div id="option_2" class="collapse">
                   <ol class="mt-4">
-                      <li>This feature requires all users participating in the group feature to complete a form on their individual accounts.</li>
+                      <li>This feature requires all users participating in the group feature to complete a form on their individual account.</li>
                       <li>One person in the group must create a chat room and specify how many people in the group are going to vote.
                           An infinite amount of people can join a chat room but the amount of people who are voting must be specified.</li>
                       <li>When a room is created, the other group members must join the chat room by entering the room number into the form field.</li>
@@ -60,7 +60,8 @@
                       <li>In the table provided, each user should assign a preference score from 1 to 10 across all movies. 10 being the
                           most preferred movie and 1 being the least preferred movie. Then confirm your inputs by clicking "submit".</li>
                       <li>Once everyone has left a chat room, it will automatically be deleted.</li>
-                      <li>Note, once the form has been completed, please wait for all users to complete their form before clicking the recommendation button.</li>
+                      <li>Note, the recommendation cannot be obtained until the last person in the group submits their preference. The last person who
+                          submits  will see a  "Get Recommendation" button. Once pressed all users will see the recommendation.</li>
                 </ol>
               </div>
         </div>

@@ -139,7 +139,7 @@ class CollaborativeFilter:
                     entry = (movie.title, movie.overview, movie.image, movie.popularity, movie.release_date.date(), genre_string[:-2])
                     movie_matches.append(entry)
 
-            return {'Recommended': movie_matches}
+            return {'Recommended Movies': movie_matches}
         else:
             return None
 
