@@ -16,6 +16,7 @@ used_rooms = defaultdict(list)
 unrated_movies = defaultdict(list)
 joined_users = defaultdict(list)
 rated_movies = defaultdict(list)
+submissions = defaultdict(list)
 
 
 @chat.route('/group_chat_options', methods=['GET', 'POST'])
@@ -142,6 +143,7 @@ def handle_movies_message_event(data):
 @chat.route('/submit_rated_movies', methods=['GET', 'POST'])
 def submit_rated_movies():
     room = request.form['room_rec']
+    num_people = -1
     username = current_user.first_name + " " + current_user.last_name
     # html form submitted
     for index in range(len(request.form)):
@@ -150,8 +152,13 @@ def submit_rated_movies():
             rated_movies[room].append(request.form['input_rating_' + str(index)])
         except KeyError:
             break
+    if used_rooms.get(room):
+        submissions[room].append(1)
+        if len(submissions.get(room)) >= int(used_rooms[room][0]):
+            num_people = -100
+
     return render_template('group_chat.html', username=username, room=room, render_form=0, cinema_form=None,
-                           num_people=-1)
+                           num_people=num_people)
 
 
 # def format_movie_title(movie):
@@ -215,6 +222,10 @@ def handle_leave_room_event(data):
         del joined_users[data['room']]
         try:
             del used_rooms[data['room']]
+        except KeyError:
+            pass
+        try:
+            del submissions[data['room']]
         except KeyError:
             pass
     socketio.emit('leave_room_announcement', data, room=data['room'])

@@ -2,7 +2,7 @@
 {% block content %}
 <div class="container">
     <legend class="border-bottom mt-3">
-    {% if num_people == -1 %}
+    {% if (num_people == -1 or num_people == -100) %}
         <h1 class="white_text">Chat room {{ room }}</h1>
     {% else %}
         <h1 class="white_text">Chat room {{ room }}</h1> <small class="white_text"> There are {{ num_people }} voters in this room</small>
@@ -57,7 +57,7 @@
                         {{ cinema_form.send(class="btn btn-outline-info") }}
                     </div>
                 </form>
-                <p id="one_movie_error" style="color:red"></p>
+                <p id="one_movie_error" class="red_text"></p>
             </div>
         {% endif %}
 
@@ -67,6 +67,7 @@
             <button class="btn btn-info" type="submit" id="submit_individual_rating" form="individual_ratings_form">Submit</button>
     </div>
 
+     <h3 id="wait_for_recommendation" class="text-center white_text"></h3>
      <div id="chat_recommendations" class="text-center chat_recommendations_scroll"></div>
 </div>
 
@@ -264,14 +265,19 @@
             })
     }
 
-    if({{ num_people }} == -1)
+    if({{ num_people }} == -100)
     {
         document.getElementById("display_recommendations_button").style.display = "block";
+    }
+    else if({{ num_people }} == -1)
+    {
+        document.getElementById("wait_for_recommendation").innerHTML = "Please wait for the last person in this group to submit their form, in order to get the recommendation.";
     }
 
      socket.on('receive_movie_recommendations', function (data)
     {
         document.getElementById("display_recommendations_button").style.display = "none";
+        document.getElementById("wait_for_recommendation").innerHTML = " ";
         document.getElementById("chat_recommendations").style.display = "block";
 
         var index;
