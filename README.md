@@ -19,7 +19,7 @@ Prerequisites
 All python packages in the requirements.txt file will have to be downloaded in order for this application to work.
 
 Finished application:
-website URL:
+website URL: https://loop-fyp.herokuapp.com/
 
 Running the tests
 •	Extensive unittest were carried out

@@ -169,7 +169,7 @@
                                                  <h6><b>Popularity:</b> {{ movie[3]}}</h6>
                                                  <h6><b>Release Date:</b> {{ movie[4] }}</h6>
                                                  <h6><b>Genre:</b> {{ movie[5]}}</h6>"
-                                   value="{{already_voted.get(movie.title)}}"
+                                   value="{{already_voted.get(movie[0])}}"
                                onclick="movie_content(this)" class="image-button img-fluid img-thumbnail"/>
                         </a>
                         <p class="movie_title_scroll">{{ movie[0] }}</p>
@@ -193,7 +193,7 @@
                                              <h6><b>Popularity:</b> {{ movie[4] }}</h6>
                                              <h6><b>Release Date:</b> {{ movie[5].date() }}</h6>
                                              <h6><b>Genre:</b> {{ movie[6]}}</h6>"
-                               value="{{already_voted.get(movie.title)}}"
+                               value="{{already_voted.get(movie[1])}}"
                            onclick="movie_content(this)" class="image-button img-fluid img-thumbnail"/>
                     </a>
                     <p class="movie_title_scroll">{{ movie[1] }}</p>
@@ -225,6 +225,7 @@ function movie_content(element)
   // document.getElementById("current_movie").innerHTML = movie_title;
 
    var vote = element.getAttribute('value');
+   console.log(vote);
    if (vote != 'None')
    {
         if (vote[1] == '1')
